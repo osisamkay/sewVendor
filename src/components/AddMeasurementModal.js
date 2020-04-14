@@ -17,9 +17,9 @@ import {
 } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import NewMeasurementComponent from '../Screens/Measurment/NewMeasurementComponent';
+import NewMeasurementComponent from '../Screens/Measurer/Measurment/NewMeasurementComponent';
 import {FlatList} from 'react-native-gesture-handler';
-import {DimensionData} from '../Screens/Measurment/MesureData';
+import {DimensionData} from '../Screens/Measurer/Measurment/MesureData';
 import {Button} from 'native-base';
 
 if (

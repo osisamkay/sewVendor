@@ -1,8 +1,8 @@
 import * as React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
-import Measurer from './Routes/MeasurerRoute';
 import Onboarding from './Routes/OnboardingRoute';
+import MeasurerTab from './Routes/MeasurerRoute/MeasurerTab';
 
 const Stack = createStackNavigator();
 
@@ -24,7 +24,7 @@ function App() {
           options={{
             headerShown: false,
           }}
-          component={Measurer}
+          component={MeasurerTab}
         />
         {/* <Stack.Screen name="Settings" component={Settings} /> */}
       </Stack.Navigator>

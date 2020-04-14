@@ -7,13 +7,17 @@ import {
 } from 'react-native-responsive-screen';
 import StarRating from 'react-native-star-rating';
 
-const CompletedLabel = ({title, day, rating}) => {
+const StatsLabel = ({title, day, rating, time}) => {
   return (
     <View>
-      <Card containerStyle={styles.container}>
+      <View style={styles.container}>
         <View style={styles.group}>
           <View>
-            <Text style={styles.title}>{title}</Text>
+            <View style={styles.picContainer}>
+              <View style={styles.pic} />
+              <Text style={styles.title}>{title}</Text>
+            </View>
+
             <Text style={styles.days}>{day}</Text>
           </View>
           <View>
@@ -26,41 +30,33 @@ const CompletedLabel = ({title, day, rating}) => {
               emptyStarColor="#fff"
               starSize={15}
             />
+            <Text style={{color: '#fff', textAlign: 'right'}}>{time}</Text>
           </View>
         </View>
-      </Card>
+      </View>
     </View>
   );
 };
 
-export default CompletedLabel;
+export default StatsLabel;
 
 const styles = StyleSheet.create({
   container: {
-    borderRadius: 39,
-    backgroundColor: '#3D7782',
-    width: widthPercentageToDP('82%'),
-    alignSelf: 'center',
-    borderColor: 'transparent',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.23,
-    shadowRadius: 2.62,
-    elevation: 4,
-    paddingHorizontal: 25,
+    paddingVertical: 19,
+    borderBottomColor: '#fff',
+    borderBottomWidth: 0.5,
   },
   title: {
     color: '#fff',
     fontFamily: 'GT Walsheim Pro Regular Regular',
     fontSize: heightPercentageToDP('2.5%'),
+    marginLeft: 5,
   },
   days: {
-    color: '#5CE3D9',
+    color: '#fff',
     fontFamily: 'GT Walsheim Pro Regular Regular',
     fontSize: heightPercentageToDP('1.875%'),
+    marginTop: 9.5,
   },
   group: {
     flexDirection: 'row',
@@ -70,5 +66,15 @@ const styles = StyleSheet.create({
   rating: {
     marginLeft: 'auto',
     alignSelf: 'flex-end',
+  },
+  pic: {
+    height: 34,
+    width: widthPercentageToDP('9.07%'),
+    backgroundColor: '#fff',
+    borderRadius: 34,
+  },
+  picContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
 });

@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {View, Text, StyleSheet, Image} from 'react-native';
+import {View, Text, StyleSheet, StatusBar, SafeAreaView} from 'react-native';
 import SplashLogo from '../../assets/Group2758.svg';
 
 const Splash = ({navigation}) => {
@@ -9,12 +9,13 @@ const Splash = ({navigation}) => {
     }, 3000);
   }, [navigation]);
   return (
-    <View style={styles.background}>
+    <SafeAreaView style={styles.background}>
+      <StatusBar barStyle="dark-content" hidden backgroundColor="#000" />
       <View style={styles.image}>
         <SplashLogo />
         <Text style={styles.txt}>Vendor</Text>
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 

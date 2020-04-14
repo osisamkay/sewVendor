@@ -5,6 +5,8 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
+  StatusBar,
+  SafeAreaView,
 } from 'react-native';
 import {Button, Divider} from 'react-native-elements';
 import {
@@ -17,60 +19,125 @@ import GreyWallet from '../../../../assets/Group2633.svg';
 import Wallet from '../../../../assets/Group 2634.svg';
 import Archivment from './Archivment';
 import {Data} from './ArchivmentData';
+import StatsLabel from '../../../components/StatsLabel';
+import StarRating from 'react-native-star-rating';
 
 const Homepage = ({route, navigation}) => {
   const [visible, setVisible] = useState(false);
   const [switchValue, setSwitchValue] = useState(false);
 
+  const data = [
+    {
+      name: 'User 01',
+      feedback: 'Early and Great human interaction',
+      time: '2 days ago',
+      rate: 4,
+    },
+    {
+      name: 'User 03',
+      feedback: 'Early and Great human interaction',
+      time: '2 days ago',
+      rate: 4.5,
+    },
+    {
+      name: 'User 02',
+      feedback: 'Early and Great human interaction',
+      time: '2 days ago',
+      rate: 2,
+    },
+  ];
+
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <View style={styles.group}>
-        <View style={styles.TopView}>
-          <View style={styles.status}>
-            <Text style={styles.TopTxt}>
-              {switchValue ? (
-                <View style={styles.spot} />
-              ) : (
-                <View style={styles.greySpot} />
-              )}
-              {switchValue ? ' Online' : ' Offline'}
-            </Text>
-            <View style={styles.Switches}>
-              <Switches
-                shape={'pill'}
-                buttonColor="#000"
-                buttonSize={17}
-                showText={false}
-                sliderHeight={heightPercentageToDP('3.45%')}
-                sliderWidth={widthPercentageToDP('11%')}
-                colorSwitchOn="#5CE3D9"
-                colorSwitchOff="#707070"
-                onChange={() => setSwitchValue(!switchValue)}
-                borderColor={switchValue ? '#5CE3D9' : '#707070'}
-                value={switchValue}
-                animationDuration={100}
-              />
+    <SafeAreaView>
+      <StatusBar
+        backgroundColor="#fff"
+        barStyle="dark-content"
+        showHideTransition
+        hidden={false}
+      />
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={styles.container}>
+        <View style={styles.group}>
+          <View style={styles.TopView}>
+            <View style={styles.status}>
+              <Text style={styles.TopTxt}>
+                {switchValue ? (
+                  <View style={styles.spot} />
+                ) : (
+                  <View style={styles.greySpot} />
+                )}
+                {switchValue ? ' Online' : ' Offline'}
+              </Text>
+              <View style={styles.Switches}>
+                <Switches
+                  shape={'pill'}
+                  buttonColor="#000"
+                  buttonSize={17}
+                  showText={false}
+                  sliderHeight={heightPercentageToDP('3.45%')}
+                  sliderWidth={widthPercentageToDP('11%')}
+                  colorSwitchOn="#5CE3D9"
+                  colorSwitchOff="#707070"
+                  onChange={() => setSwitchValue(!switchValue)}
+                  borderColor={switchValue ? '#5CE3D9' : '#707070'}
+                  value={switchValue}
+                  animationDuration={100}
+                />
+              </View>
             </View>
+            <View style={styles.Wallet}>
+              {switchValue ? <Wallet /> : <GreyWallet />}
+            </View>
+            <Text style={styles.bal}>Sew Balance</Text>
+            <Text style={switchValue ? styles.amt : styles.amtgrey}>
+              20,890
+              <Text style={switchValue ? styles.amts : styles.amtsgrey}>
+                NGN
+              </Text>
+            </Text>
+            <Text style={styles.dueDate}>Next withdrawal due 7th April 20</Text>
           </View>
-          <View style={styles.Wallet}>
-            {switchValue ? <Wallet /> : <GreyWallet />}
+          <View style={styles.top}>
+            {Data.map(data => {
+              return (
+                <Archivment
+                  img={data.svg}
+                  value={data.value}
+                  text={data.text}
+                />
+              );
+            })}
           </View>
-          <Text style={styles.bal}>Sew Balance</Text>
-          <Text style={switchValue ? styles.amt : styles.amtgrey}>
-            20,890
-            <Text style={switchValue ? styles.amts : styles.amtsgrey}>NGN</Text>
-          </Text>
-          <Text style={styles.dueDate}>Next withdrawal due 7th April 20</Text>
+          <View style={styles.review}>
+            <View style={styles.stats}>
+              <Text style={styles.stats_title}>Reviews</Text>
+              <View style={{flexDirection: 'row', alignItems: 'center'}}>
+                <Text style={styles.stats_rates}>87 Reviews | 4.0</Text>
+                <StarRating
+                  disabled={false}
+                  maxStars={5}
+                  rating={4}
+                  fullStarColor="#5CE3D9"
+                  emptyStarColor="#fff"
+                  starSize={15}
+                />
+              </View>
+            </View>
+            {data.map(data => {
+              return (
+                <StatsLabel
+                  time={data.time}
+                  day={data.feedback}
+                  title={data.name}
+                  rating={data.rate}
+                />
+              );
+            })}
+          </View>
         </View>
-        <View style={styles.top}>
-          {Data.map(data => {
-            return (
-              <Archivment img={data.svg} value={data.value} text={data.text} />
-            );
-          })}
-        </View>
-      </View>
-    </ScrollView>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
@@ -80,7 +147,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     backgroundColor: '#fff',
-    flex: 1,
+    // flex: 1,
   },
   group: {
     paddingVertical: 19,
@@ -160,5 +227,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     marginVertical: 17,
+  },
+  review: {
+    backgroundColor: '#000',
+    borderRadius: 8,
+    padding: 13,
+  },
+  stats: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    borderBottomColor: '#fff',
+    borderBottomWidth: 0.5,
+    paddingBottom: 13,
+  },
+  stats_title: {
+    color: '#fff',
+    fontSize: heightPercentageToDP('2.5%'),
+  },
+  stats_rates: {
+    color: '#fff',
+    fontSize: heightPercentageToDP('1.875%'),
+    marginRight: 5,
   },
 });

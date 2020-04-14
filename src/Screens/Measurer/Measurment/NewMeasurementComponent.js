@@ -24,16 +24,18 @@ const styles = StyleSheet.create({
     width: widthPercentageToDP('70%'),
   },
   input: {
-    width: widthPercentageToDP('8%'),
-    height: widthPercentageToDP('8%'),
+    width: widthPercentageToDP('10%'),
+    height: widthPercentageToDP('10%'),
     borderWidth: 1,
-    borderRadius: 25,
+    borderRadius: 8,
     textAlign: 'center',
-    borderColor: '#3D7984',
+    marginTop: 10,
+    borderColor: '#000',
+    fontSize: heightPercentageToDP('2.1875%'),
   },
   text: {
     fontSize: heightPercentageToDP('2.1875%'),
     fontFamily: 'GT Walsheim Pro Regular Regular',
-    color: '#3D7984',
+    color: '#000',
   },
 });
