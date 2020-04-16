@@ -20,6 +20,8 @@ import Complete from '../../src/Screens/Measurer/Completed/Complete';
 import PendingRoute from '../MeasurerRoute/PendingRoute';
 import CustomDrawerContent from '../../CustomDrawerContent';
 import CompleteRoute from './CompleteRoute';
+import ArchivementRoute from './ArchivementRoute';
+import WalletRoute from './WalletRoute';
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -55,8 +57,8 @@ function MeasurersTab() {
       <Tab.Screen name="Home" component={Measurer} />
       <Tab.Screen name="Pending" component={PendingRoute} />
       <Tab.Screen name="Complete" component={CompleteRoute} />
-      <Tab.Screen name="Achievements" component={Complete} />
-      <Tab.Screen name="Wallet" component={Complete} />
+      <Tab.Screen name="Achievements" component={ArchivementRoute} />
+      <Tab.Screen name="Wallet" component={WalletRoute} />
     </Tab.Navigator>
   );
 }
