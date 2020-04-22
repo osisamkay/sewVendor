@@ -31,7 +31,8 @@ const SignUp = ({navigation}) => {
                 buttonStyle={styles.button}
                 titleStyle={styles.btnTxt}
                 onPress={() => {
-                  navigation.navigate('SignUpScreen');
+                  // navigation.navigate('SignUpScreen');
+                  navigation.navigate('Measurer');
                 }}
               />
               <Button
@@ -39,7 +40,7 @@ const SignUp = ({navigation}) => {
                 buttonStyle={styles.button}
                 titleStyle={styles.btnTxt}
                 onPress={() => {
-                  navigation.navigate('SignUpScreen');
+                  navigation.navigate('Tailor');
                 }}
               />
               <Button
@@ -47,7 +48,7 @@ const SignUp = ({navigation}) => {
                 buttonStyle={styles.button}
                 titleStyle={styles.btnTxt}
                 onPress={() => {
-                  navigation.navigate('SignUpScreen');
+                  navigation.navigate('Vendor');
                 }}
               />
             </View>

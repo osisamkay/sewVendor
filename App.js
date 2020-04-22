@@ -3,6 +3,8 @@ import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import Onboarding from './Routes/OnboardingRoute';
 import MeasurerTab from './Routes/MeasurerRoute/MeasurerTab';
+import VendorTab from './Routes/VendorRoute/VendorTab';
+import TailorTab from './Routes/TailorRoute/TailorTab';
 
 const Stack = createStackNavigator();
 
@@ -26,7 +28,20 @@ function App() {
           }}
           component={MeasurerTab}
         />
-        {/* <Stack.Screen name="Settings" component={Settings} /> */}
+        <Stack.Screen
+          name="Vendor"
+          options={{
+            headerShown: false,
+          }}
+          component={VendorTab}
+        />
+        <Stack.Screen
+          name="Tailor"
+          options={{
+            headerShown: false,
+          }}
+          component={TailorTab}
+        />
       </Stack.Navigator>
     </NavigationContainer>
   );
