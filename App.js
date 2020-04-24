@@ -5,6 +5,12 @@ import Onboarding from './Routes/OnboardingRoute';
 import MeasurerTab from './Routes/MeasurerRoute/MeasurerTab';
 import VendorTab from './Routes/VendorRoute/VendorTab';
 import TailorTab from './Routes/TailorRoute/TailorTab';
+import {createStore, applyMiddleware} from 'redux';
+import {Provider} from 'react-redux';
+import {rootReducer} from './src/reducer/rootReducer';
+import createSagaMiddleware from 'redux-saga';
+import saga from './src/saga/rootSaga';
+import {Root} from 'native-base';
 
 const Stack = createStackNavigator();
 
@@ -47,4 +53,18 @@ function App() {
   );
 }
 
-export default App;
+// export default App;
+
+const sagaMiddleware = createSagaMiddleware();
+
+const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+sagaMiddleware.run(saga);
+export default () => {
+  return (
+    <Provider store={store}>
+      <Root>
+        <App />
+      </Root>
+    </Provider>
+  );
+};

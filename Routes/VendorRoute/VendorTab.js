@@ -22,6 +22,8 @@ import CompleteRoute from './CompleteRoute';
 import ArchivementRoute from './ArchivementRoute';
 import WalletRoute from './WalletRoute';
 import PendingRoute from './PendingRoute';
+import UpdateInfo from '../../src/Screens/Drawer/UpdateInfo';
+import WithdrawOption from '../../src/Screens/Drawer/WithdrawOption';
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -80,14 +82,24 @@ export default function VendorTab() {
           headerTitle: 'Dashboard',
         }}
       />
-      {/* <Drawer.Screen
-        name="Pending"
-        component={PendingRoute}
+      <Drawer.Screen
+        name="UpdateInfo"
+        component={UpdateInfo}
         options={{
-          drawerLabel: 'My Measurement',
-          headerShown: false,
+          drawerLabel: 'Update Info',
+          headerTitle: 'Dashboard',
+          headerShown: true,
         }}
-      /> */}
+      />
+      <Drawer.Screen
+        name="WithdrawOption"
+        component={WithdrawOption}
+        options={{
+          drawerLabel: 'Withdraw Option',
+          headerTitle: 'Dashboard',
+          headerShown: true,
+        }}
+      />
     </Drawer.Navigator>
   );
 }

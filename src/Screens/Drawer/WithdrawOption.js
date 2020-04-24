@@ -19,11 +19,12 @@ import {
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
 import Ionicons from 'react-native-vector-icons/FontAwesome';
-
+import {Picker} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button, Textarea, Card} from 'native-base';
 
-const UpdateInfo = ({navigation, closeModal, images, Add, image}) => {
+const WithdrawOption = ({navigation, closeModal, images, Add, image}) => {
+  const [frequency, setFrequency] = useState('Frequency');
   return (
     <SafeAreaView style={{flex: 1}}>
       <Header
@@ -55,48 +56,46 @@ const UpdateInfo = ({navigation, closeModal, images, Add, image}) => {
           />
         }
         centerComponent={{
-          text: <Text style={styles.maiHeaderTxt}>Update Info</Text>,
+          text: <Text style={styles.maiHeaderTxt}>Withdraw Options</Text>,
         }}
       />
       <ScrollView contentContainerStyle={styles.container}>
         <View style={styles.group}>
           <View>
             <Card style={styles.test}>
-              <TextInput style={styles.input} placeholder="First Name" />
+              {/* <TextInput style={styles.input} placeholder="First Name" />
+               */}
+              <Picker
+                mode="dropdown"
+                // iosIcon={<Icon name="arrow-down" />}
+                placeholder="Frequencey"
+                placeholderStyle={{color: '#707070'}}
+                style={{width: undefined}}
+                selectedValue={frequency}
+                onValueChange={value => {
+                  setFrequency(value);
+                }}>
+                <Picker.Item label="Frequencey" value="key0" />
+                <Picker.Item label="Weekly" value="key1" />
+                <Picker.Item label="Bi Monthly" value="key2" />
+                <Picker.Item label="Monthly" value="key3" />
+              </Picker>
             </Card>
             <Card style={styles.test}>
-              <TextInput style={styles.input} placeholder="Last Type" />
-            </Card>
-            <Card style={styles.test}>
-              <TextInput style={styles.input} placeholder="Email" />
-            </Card>
-            <Card style={styles.test}>
-              <TextInput style={styles.input} placeholder="Phone Number" />
-            </Card>
-            <Card style={styles.test}>
-              <TextInput
-                style={styles.input}
-                placeholder="State of Residence"
-              />
-            </Card>
-            <Card style={styles.test}>
-              <TextInput
-                style={styles.input}
-                placeholder="Residential Address"
-              />
-            </Card>
-            <Card style={styles.test}>
-              <TextInput style={styles.input} placeholder="Work Address" />
-            </Card>
-            <Card style={styles.tested}>
-              <Text style={styles.input}>Upload A Valid ID Card</Text>
-              <View style={styles.blub} />
-            </Card>
-            <Card style={styles.test}>
-              <TextInput
-                style={styles.input}
-                placeholder="For Security Reasons, Enter Your Password"
-              />
+              <Picker
+                mode="dropdown"
+                // iosIcon={<Icon name="arrow-down" />}
+                placeholder="Select Bank"
+                placeholderStyle={{color: '#707070'}}
+                style={{width: undefined}}
+                selectedValue={frequency}
+                onValueChange={value => {
+                  setFrequency(value);
+                }}>
+                <Picker.Item label="Stanbic Bank" value="key1" />
+                <Picker.Item label="UBA" value="key2" />
+                <Picker.Item label="Gtbank" value="key3" />
+              </Picker>
             </Card>
           </View>
           <View style={styles.saveBtnGrp}>
@@ -110,7 +109,7 @@ const UpdateInfo = ({navigation, closeModal, images, Add, image}) => {
   );
 };
 
-export default UpdateInfo;
+export default WithdrawOption;
 
 const styles = StyleSheet.create({
   maiHeaderTxt: {
@@ -134,7 +133,7 @@ const styles = StyleSheet.create({
     paddingBottom: 20,
   },
   container: {
-    // flex: 1,
+    flex: 1,
   },
 
   group: {

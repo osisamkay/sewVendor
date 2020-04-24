@@ -23,6 +23,8 @@ import WalletRoute from './WalletRoute';
 import Tailor from './TailorRoute';
 import TailorPendingRoute from './PendingRoute';
 import UpdateInfo from '../../src/Screens/Drawer/UpdateInfo';
+import WithdrawOption from '../../src/Screens/Drawer/WithdrawOption';
+import Onboarding from '../OnboardingRoute';
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -71,8 +73,7 @@ export default function TailorTab() {
         backgroundColor: '#000',
         width: widthPercentageToDP('80%'),
       }}
-      drawerContent={props => <CustomDrawerContent {...props} />}
-      hideStatusBar>
+      drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
         name="HomePages"
         component={TailorsTab}
@@ -81,7 +82,25 @@ export default function TailorTab() {
       <Drawer.Screen
         name="UpdateInfo"
         component={UpdateInfo}
-        options={{drawerLabel: 'Update Info', headerTitle: 'Dashboard'}}
+        options={{
+          drawerLabel: 'Update Info',
+          headerTitle: 'Dashboard',
+          headerShown: true,
+        }}
+      />
+      <Drawer.Screen
+        name="WithdrawOption"
+        component={WithdrawOption}
+        options={{
+          drawerLabel: 'Withdraw Option',
+          headerTitle: 'Dashboard',
+          headerShown: true,
+        }}
+      />
+      <Drawer.Screen
+        name="Onboarding"
+        component={Onboarding}
+        options={{drawerLabel: 'Logout', gestureEnabled: false}}
       />
     </Drawer.Navigator>
   );
