@@ -1,4 +1,4 @@
 export const LoginInput = [
-  {placeholder: 'Phone Number'},
-  {placeholder: 'Password'},
+  {placeholder: 'Email', name: 'email'},
+  {placeholder: 'Password', name: 'password'},
 ];

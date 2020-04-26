@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   View,
   Text,
@@ -15,8 +16,21 @@ import {
 } from 'react-native-responsive-screen';
 import Inputs from '../../components/Inputs';
 import {RecoverInput} from './RecoverInput';
+import {recoverPassword} from '../LoginScreen/Action/Action';
 
 const Recovery = ({navigation}) => {
+  const [values, setValues] = useState({});
+  const [show, setShow] = useState(true);
+  const {loading, recovered} = useSelector(state => state.LoginReducer);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (recovered) {
+      navigation.navigate('RecoverSuccess');
+    }
+  }, [navigation, recovered]);
+
   return (
     <SafeAreaView>
       <View style={styles.container}>
@@ -27,15 +41,29 @@ const Recovery = ({navigation}) => {
         <View style={styles.recover}>
           <View style={styles.middle}>
             {RecoverInput.map(data => {
-              return <Inputs placeholder={data.placeholder} color={'green'} />;
+              return (
+                <Inputs
+                  placeholder={data.placeholder}
+                  color={'green'}
+                  status={show}
+                  textChange={value => {
+                    let input = data.name;
+                    setValues({
+                      ...values,
+                      [input]: value,
+                    });
+                  }}
+                />
+              );
             })}
             <Button
               title="Recover Password"
               buttonStyle={styles.button}
               titleStyle={styles.btnTxt}
               onPress={() => {
-                navigation.navigate('RecoverSuccess');
+                dispatch(recoverPassword(values));
               }}
+              loading={loading}
             />
           </View>
           <View style={styles.small} />

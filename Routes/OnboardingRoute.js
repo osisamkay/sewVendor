@@ -10,6 +10,7 @@ import SignupScreen from '../src/Screens/SignupScreen/SignupScreen';
 import LoginScreen from '../src/Screens/LoginScreen/LoginScreen';
 import Recovery from '../src/Screens/Recovery/Recovery';
 import RecoverSuccess from '../src/Screens/Recovery/RecoverSucess';
+import VerificationScreen from '../src/Screens/SignupScreen/Verification';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -41,6 +42,11 @@ function Onboarding() {
         name="SignUpScreen"
         options={{headerShown: false}}
         component={SignupScreen}
+      />
+      <Stack.Screen
+        name="Verification"
+        options={{headerShown: false}}
+        component={VerificationScreen}
       />
       <Stack.Screen
         name="LoginScreen"

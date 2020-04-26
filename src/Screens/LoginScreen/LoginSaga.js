@@ -4,23 +4,19 @@ import {Toast} from 'native-base';
 import {useNavigation} from '@react-navigation/native';
 
 import {actionType} from './Action/ActionType';
-import {
-  registrationSuccess,
-  registrationError,
-  ValidationSuccess,
-} from './Action/Action.js';
+import {loginUsers, loginError, loginSuccess} from './Action/Action.js';
 import {widthPercentageToDP} from 'react-native-responsive-screen';
 
-const {REGISTER_USER, RESEND_CODE, SUBMIT_TOKEN} = actionType;
+const {LOGIN_USER, RECOVER} = actionType;
 
 const Style = {
   width: widthPercentageToDP('88%'),
   alignSelf: 'center',
   borderRadius: 6,
 };
-function* registerUsers({payload}) {
+function* LoginUsers({payload}) {
   try {
-    const request = yield Instance.post('vendor/register', payload);
+    const request = yield Instance.post('vendor/login', payload);
 
     if (request.status === 200) {
       let data = request.data;
@@ -36,7 +32,7 @@ function* registerUsers({payload}) {
           duration: 5000,
           style: Style,
         });
-        yield put(registrationError(err));
+        yield put(loginError(err));
       } else {
         let m = data.message;
         Toast.show({
@@ -47,7 +43,7 @@ function* registerUsers({payload}) {
           duration: 10000,
           style: Style,
         });
-        yield put(registrationSuccess(m));
+        yield put(loginSuccess(m));
       }
     }
   } catch (err) {
@@ -56,12 +52,9 @@ function* registerUsers({payload}) {
     alert('something went wrong, Please check that you are connected');
   }
 }
-function* resendVerification({payload}) {
+function* PasswordRecovery({payload}) {
   try {
-    const request = yield Instance.put(
-      'vendor/registration/token/resend',
-      payload,
-    );
+    const request = yield Instance.post('vendor/login', payload);
 
     if (request.status === 200) {
       let data = request.data;
@@ -77,6 +70,7 @@ function* resendVerification({payload}) {
           duration: 5000,
           style: Style,
         });
+        yield put(loginError(err));
       } else {
         let m = data.message;
         Toast.show({
@@ -87,43 +81,7 @@ function* resendVerification({payload}) {
           duration: 10000,
           style: Style,
         });
-      }
-    }
-  } catch (err) {
-    console.log(err);
-    yield put({type: 'ERROR'});
-    alert('something went wrong, Please check that you are connected');
-  }
-}
-function* verifyToken({payload}) {
-  try {
-    const request = yield Instance.put('vendor/registration/confirm', payload);
-
-    if (request.status === 200) {
-      let data = request.data;
-      console.log(data);
-      let s = data.status;
-      if (!s) {
-        let err = data.message;
-        Toast.show({
-          text: err,
-          buttonText: 'Okay',
-          position: 'top',
-          type: 'danger',
-          duration: 5000,
-          style: Style,
-        });
-      } else {
-        let m = data.message;
-        Toast.show({
-          text: m,
-          buttonText: 'Okay',
-          position: 'top',
-          type: 'success',
-          duration: 10000,
-          style: Style,
-        });
-        yield put(ValidationSuccess(m));
+        yield put(loginSuccess(m));
       }
     }
   } catch (err) {
@@ -133,8 +91,7 @@ function* verifyToken({payload}) {
   }
 }
 
-export default function* SignUpSaga() {
-  yield takeEvery(REGISTER_USER, registerUsers);
-  yield takeEvery(RESEND_CODE, resendVerification);
-  yield takeEvery(SUBMIT_TOKEN, verifyToken);
+export default function* LoginSaga() {
+  yield takeEvery(LOGIN_USER, LoginUsers);
+  yield takeEvery(RECOVER, PasswordRecovery);
 }

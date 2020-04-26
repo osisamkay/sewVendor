@@ -1,4 +1,5 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import {useSelector, useDispatch} from 'react-redux';
 import {
   View,
   Text,
@@ -7,6 +8,7 @@ import {
   ScrollView,
   KeyboardAvoidingView,
   Platform,
+  TouchableOpacity,
 } from 'react-native';
 import Logo from '../../../assets/Logo.svg';
 import {
@@ -16,8 +18,24 @@ import {
 import {SignUpInput} from './SignUpInputs';
 import Inputs from '../../components/Inputs';
 import {Button} from 'react-native-elements';
+import {registerUser} from './Action/Action';
+import Icon from 'react-native-vector-icons/Feather';
 
-const SignupScreen = () => {
+const SignupScreen = ({route, navigation}) => {
+  const [values, setValues] = useState({});
+  const [show, setShow] = useState(true);
+  const {id} = route.params;
+  const {loading, registration} = useSelector(state => state.SignUpReducer);
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+    if (registration) {
+      navigation.navigate('Verification');
+    }
+  }, [navigation, registration]);
+
+  const propOwn = Object.getOwnPropertyNames(values);
+
   return (
     <SafeAreaView>
       <KeyboardAvoidingView
@@ -36,15 +54,37 @@ const SignupScreen = () => {
                   <Inputs
                     key={data.placeholder}
                     placeholder={data.placeholder}
+                    status={show}
+                    textChange={value => {
+                      let input = data.name;
+
+                      setValues({
+                        ...values,
+                        vendor_category_id: id,
+                        [input]: value,
+                      });
+                    }}
                   />
                 );
               })}
             </View>
+            <TouchableOpacity
+              style={styles.p}
+              onPress={() => {
+                setShow(!show);
+              }}>
+              <Icon name={!show ? 'eye-off' : 'eye'} size={20} color="#fff" />
+            </TouchableOpacity>
 
             <Button
               title="Sign Up"
               buttonStyle={styles.button}
               titleStyle={styles.btnTxt}
+              disabled={propOwn.length < 5 ? true : false}
+              onPress={() => {
+                dispatch(registerUser(values));
+              }}
+              loading={loading}
             />
           </View>
           <View style={styles.small} />
@@ -106,5 +146,10 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: heightPercentageToDP('83%'),
     left: widthPercentageToDP('78%'),
+  },
+  p: {
+    position: 'absolute',
+    top: heightPercentageToDP('49%'),
+    right: widthPercentageToDP('17%'),
   },
 });

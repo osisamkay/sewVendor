@@ -1,13 +1,13 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   View,
+  Text,
+  StyleSheet,
   SafeAreaView,
   ScrollView,
   KeyboardAvoidingView,
   Platform,
-  StyleSheet,
-  Text,
   TouchableOpacity,
 } from 'react-native';
 import Logo from '../../../assets/Logo.svg';
@@ -15,18 +15,25 @@ import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
+import {VerificationInput} from './SignUpInputs';
 import Inputs from '../../components/Inputs';
 import {Button} from 'react-native-elements';
-import {LoginInput} from './LoginInputs';
-import Icon from 'react-native-vector-icons/Feather';
-import {loginUser} from './Action/Action';
+import {resendCode, submitToken} from './Action/Action';
 
-const LoginScreen = ({navigation}) => {
+const VerificationScreen = ({route, navigation}) => {
   const [values, setValues] = useState({});
   const [show, setShow] = useState(true);
-  const {loading, registration} = useSelector(state => state.SignUpReducer);
-
   const dispatch = useDispatch();
+  const {loading, userDataInput, token_verified} = useSelector(
+    state => state.SignUpReducer,
+  );
+
+  useEffect(() => {
+    if (token_verified) {
+      navigation.navigate('LoginScreen');
+    }
+  }, [navigation, token_verified]);
+
   return (
     <SafeAreaView>
       <KeyboardAvoidingView
@@ -40,7 +47,7 @@ const LoginScreen = ({navigation}) => {
               <Logo />
             </View>
             <View style={styles.inputContainer}>
-              {LoginInput.map(data => {
+              {VerificationInput.map(data => {
                 return (
                   <Inputs
                     key={data.placeholder}
@@ -51,6 +58,7 @@ const LoginScreen = ({navigation}) => {
 
                       setValues({
                         ...values,
+                        email: userDataInput.email,
                         [input]: value,
                       });
                     }}
@@ -58,30 +66,23 @@ const LoginScreen = ({navigation}) => {
                 );
               })}
               <TouchableOpacity
-                style={styles.p}
                 onPress={() => {
-                  setShow(!show);
+                  const data = {email: userDataInput.email};
+                  dispatch(resendCode(data));
                 }}>
-                <Icon name={!show ? 'eye-off' : 'eye'} size={20} color="#fff" />
-              </TouchableOpacity>
-              <TouchableOpacity
-                onPress={() => {
-                  navigation.navigate('RecoveryScreen');
-                }}>
-                <Text style={styles.forgot}>Forgot Password</Text>
+                <Text style={styles.Resend}>Click here to resend Code</Text>
               </TouchableOpacity>
             </View>
 
             <Button
-              loading={loading}
-              onPress={() => {
-                dispatch(loginUser(values));
-                // navigation.navigate('Measurer');
-              }}
-              title="Sign In"
+              title="Sign Up"
               buttonStyle={styles.button}
               titleStyle={styles.btnTxt}
-              raised
+              onPress={() => {
+                console.log(values);
+                dispatch(submitToken(values));
+              }}
+              loading={loading ? true : false}
             />
           </View>
           <View style={styles.small} />
@@ -91,7 +92,7 @@ const LoginScreen = ({navigation}) => {
   );
 };
 
-export default LoginScreen;
+export default VerificationScreen;
 
 const styles = StyleSheet.create({
   container: {
@@ -119,7 +120,7 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   inputContainer: {
-    height: 137,
+    height: heightPercentageToDP('10.5%'),
     justifyContent: 'space-between',
   },
   button: {
@@ -131,8 +132,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
   },
   btnTxt: {
-    color: '#3D7984',
+    color: '#000',
     fontSize: 14,
+    fontFamily: 'GT Walsheim Pro Regular Regular',
   },
   small: {
     height: 54,
@@ -143,14 +145,17 @@ const styles = StyleSheet.create({
     top: heightPercentageToDP('83%'),
     left: widthPercentageToDP('78%'),
   },
-  forgot: {
-    textAlign: 'center',
-    color: '#5CE3D9',
-    fontSize: 12,
-  },
   p: {
     position: 'absolute',
-    top: heightPercentageToDP('9%'),
-    right: widthPercentageToDP('0%'),
+    top: heightPercentageToDP('49%'),
+    right: widthPercentageToDP('17%'),
+  },
+  Resend: {
+    color: '#5ce3d9',
+    fontSize: heightPercentageToDP('2.015%'),
+    alignSelf: 'center',
+    borderBottomWidth: 1,
+    borderBottomColor: '#5ce3d9',
+    padding: 5,
   },
 });

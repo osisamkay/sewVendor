@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -31,8 +31,10 @@ const SignUp = ({navigation}) => {
                 buttonStyle={styles.button}
                 titleStyle={styles.btnTxt}
                 onPress={() => {
-                  // navigation.navigate('SignUpScreen');
-                  navigation.navigate('Measurer');
+                  navigation.navigate('SignUpScreen', {
+                    id: 1,
+                  });
+                  // navigation.navigate('Measurer');
                 }}
               />
               <Button
@@ -40,7 +42,10 @@ const SignUp = ({navigation}) => {
                 buttonStyle={styles.button}
                 titleStyle={styles.btnTxt}
                 onPress={() => {
-                  navigation.navigate('Tailor');
+                  navigation.navigate('SignUpScreen', {
+                    id: 2,
+                  });
+                  // navigation.navigate('Tailor');
                 }}
               />
               <Button
@@ -48,7 +53,8 @@ const SignUp = ({navigation}) => {
                 buttonStyle={styles.button}
                 titleStyle={styles.btnTxt}
                 onPress={() => {
-                  navigation.navigate('Vendor');
+                  // navigation.navigate('Vendor');
+                  navigation.navigate('SignUpScreen', {id: 3});
                 }}
               />
             </View>

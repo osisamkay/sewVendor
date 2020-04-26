@@ -1,8 +1,11 @@
 import React from 'react';
 import {View, StyleSheet, TextInput} from 'react-native';
-import {widthPercentageToDP} from 'react-native-responsive-screen';
+import {
+  widthPercentageToDP,
+  heightPercentageToDP,
+} from 'react-native-responsive-screen';
 
-const Inputs = ({placeholder, color}) => {
+const Inputs = ({placeholder, color, textChange, status}) => {
   return (
     <View>
       <TextInput
@@ -10,7 +13,9 @@ const Inputs = ({placeholder, color}) => {
         // errorStyle={{color: 'red'}}
         // errorMessage="ENTER A VALID ERROR HERE"
         style={color === 'green' ? styles.inputsTwo : styles.inputs}
-        placeholderTextColor={color === 'green' ? '#3D7782' : '#fff'}
+        placeholderTextColor={color === 'green' ? '#3D7782' : '#707070'}
+        onChangeText={textChange}
+        secureTextEntry={placeholder === 'Password' ? status : false}
       />
     </View>
   );
@@ -24,9 +29,9 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#FFFFFF',
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: heightPercentageToDP('2.157%'),
     textAlign: 'center',
-    paddingBottom: 1,
+    paddingBottom: 4,
     fontFamily: 'GT Walsheim Pro Regular Regular',
   },
   inputsTwo: {
@@ -36,7 +41,7 @@ const styles = StyleSheet.create({
     color: '#3D7782',
     fontSize: 14,
     textAlign: 'center',
-    paddingBottom: 1,
+    paddingBottom: 4,
     fontFamily: 'GT Walsheim Pro Regular Regular',
   },
 });

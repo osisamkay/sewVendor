@@ -1,1 +1,1 @@
-export const RecoverInput = [{placeholder: 'Email'}];
+export const RecoverInput = [{placeholder: 'Email', name: 'email'}];
