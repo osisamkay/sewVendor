@@ -27,64 +27,17 @@ import StarRating from 'react-native-star-rating';
 import FabricStyle from './FabricStyle';
 import {FabricData} from './FabricData';
 import AddModal from './AddModal';
-import ImagePicker from 'react-native-image-picker';
-
+import useHome from './hooks/useHome';
+import {useSelector, useDispatch} from 'react-redux';
 const VendorHomepage = ({route, navigation}) => {
   const [visible, setVisible] = useState(false);
   const [add, setAdd] = useState(false);
   const [switchValue, setSwitchValue] = useState(false);
-  const [image, setImage] = useState({});
-  const [images, setImages] = useState(false);
-  const options = {};
-
-  const requestCameraPermission = async () => {
-    try {
-      const granted = await PermissionsAndroid.request(
-        PermissionsAndroid.PERMISSIONS.CAMERA,
-        {
-          title: 'Cool Photo App Camera Permission',
-          message:
-            'Cool Photo App needs access to your camera ' +
-            'so you can take awesome pictures.',
-          buttonNeutral: 'Ask Me Later',
-          buttonNegative: 'Cancel',
-          buttonPositive: 'OK',
-        },
-      );
-      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-        console.log('You can use the camera');
-        handleImagePicker();
-      } else {
-        console.log('Camera permission denied');
-      }
-    } catch (err) {
-      console.warn(err);
-    }
-  };
-
-  const handleImagePicker = () => {
-    return ImagePicker.showImagePicker(options, response => {
-      // console.log('Response = ', response);
-
-      if (response.didCancel) {
-        console.log('User cancelled image picker');
-      } else if (response.error) {
-        console.log('ImagePicker Error: ', response.error);
-      } else if (response.customButton) {
-        console.log('User tapped custom button: ', response.customButton);
-      } else {
-        const source = {uri: response.uri};
-        console.log(source);
-        // You can also display the image using data:
-        // const source = { uri: 'data:image/jpeg;base64,' + response.data };
-        setImage(source);
-        setImages(true);
-        // this.setState({
-        //   avatarSource: source,
-        // });
-      }
-    });
-  };
+  const [inputs, setInputs] = useState({});
+  const [materials] = useHome();
+  const {userData} = useSelector(state => state.LoginReducer);
+  let {access_token} = userData;
+  const options = {mediaType: 'photo'};
 
   const data = [
     {
@@ -181,14 +134,15 @@ const VendorHomepage = ({route, navigation}) => {
               </TouchableOpacity>
             </View>
             <View style={styles.fabrics}>
-              {FabricData.map(item => {
+              {materials.map(item => {
                 return (
                   <FabricStyle
                     status={true}
-                    name={item.name}
+                    name={item.title}
                     location={item.location}
                     rating={item.rating}
                     Price={item.Price}
+                    image={item.img_url}
                     onSelect={() => {
                       // handleSelected(item);
                     }}
@@ -259,12 +213,7 @@ const VendorHomepage = ({route, navigation}) => {
         modalVisible={add}
         closeModal={() => {
           setAdd(false);
-          setImages(false);
-          setImage({});
         }}
-        Add={requestCameraPermission}
-        image={image}
-        images={images}
       />
     </SafeAreaView>
   );

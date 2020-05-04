@@ -34,9 +34,15 @@ const CarouselModal = ({
   Report,
   Confirm,
   indexed,
+  Message,
 }) => {
   const [index, setIndex] = useState(indexed);
   const [sliderWidth, setSliderWidth] = useState(widthPercentageToDP('79%'));
+  const message = [
+    {
+      title: <Text style={styles.msg}>{Message}</Text>,
+    },
+  ];
   const carouselItems = [
     {
       title: (
@@ -85,7 +91,7 @@ const CarouselModal = ({
             layout={'stack'}
             layoutCardOffset={18}
             // ref={ref => (this.carousel = ref)}
-            data={carouselItems}
+            data={Message !== ' ' ? message : carouselItems}
             sliderWidth={sliderWidth}
             itemWidth={sliderWidth}
             renderItem={_renderItem}
@@ -218,5 +224,10 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     marginHorizontal: 2,
     backgroundColor: '#707070',
+  },
+  msg: {
+    textAlign: 'center',
+    color: '#000',
+    fontSize: heightPercentageToDP('1.875%'),
   },
 });

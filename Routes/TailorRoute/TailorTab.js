@@ -35,7 +35,7 @@ function TailorsTab() {
         tabBarIcon: ({focused, color, size}) => {
           if (route.name === 'Home') {
             return focused ? <Home size={50} /> : <HomeB />;
-          } else if (route.name === 'Pending') {
+          } else if (route.name === 'Requests') {
             return focused ? <PendingIcon /> : <PendingIconB />;
           } else if (route.name === 'Complete') {
             return focused ? <CompleteIcon /> : <CompleteIconB />;
@@ -58,7 +58,7 @@ function TailorsTab() {
         },
       }}>
       <Tab.Screen name="Home" component={Tailor} />
-      <Tab.Screen name="Pending" component={TailorPendingRoute} />
+      <Tab.Screen name="Requests" component={TailorPendingRoute} />
       <Tab.Screen name="Complete" component={CompleteRoute} />
       <Tab.Screen name="Achievements" component={ArchivementRoute} />
       <Tab.Screen name="Wallet" component={WalletRoute} />

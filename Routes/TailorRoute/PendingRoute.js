@@ -18,7 +18,7 @@ function TailorPendingRoute({navigation}) {
   return (
     <Stack.Navigator screenOptions={{headerTitleAlign: 'center'}}>
       <Stack.Screen
-        name="Pending Requests"
+        name="Requests"
         options={{
           //   title: 'Hello User',
           headerRight: () => (

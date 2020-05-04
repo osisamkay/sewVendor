@@ -21,6 +21,7 @@ import {Button} from 'react-native-elements';
 import PendingModal from './PendingModal';
 import PendingModalConfirmation from './PendingModalConfirmation';
 import CarouselModal from './CarouselModal';
+import useRequest from './useRequest';
 
 const Data = [
   {
@@ -31,6 +32,8 @@ const Data = [
     Transit: false,
     size: '6 Yards',
   },
+];
+const Data2 = [
   {
     id: 2,
     user: ' Retailer002',
@@ -47,7 +50,18 @@ const TailorPending = ({Measurements}) => {
   const [confirm, setConfirm] = useState(false);
   const [openCarousel, setOpenCarousel] = useState(false);
   const [starCount, setStarCount] = useState(0);
-
+  const [segment, setSegment] = useState(false);
+  const [
+    loading,
+    results,
+    resultsOngoing,
+    Messages,
+    status1,
+    ViewRequest,
+    reqMessages,
+    setReqMessage,
+    CompleteRequest,
+  ] = useRequest();
   const navigation = useNavigation();
 
   const onStarRatingPress = rating => {
@@ -61,65 +75,130 @@ const TailorPending = ({Measurements}) => {
         showHideTransition
         hidden={false}
       />
+      <View style={styles.segmentContainer}>
+        <TouchableOpacity
+          onPress={() => {
+            setSegment(false);
+          }}>
+          <Text style={segment ? styles.segmentOff : styles.segment}>
+            Available
+          </Text>
+        </TouchableOpacity>
+        <View style={styles.divider} />
+        <TouchableOpacity
+          onPress={() => {
+            setSegment(true);
+          }}>
+          <Text style={!segment ? styles.segmentOff : styles.segment}>
+            Ongoing
+          </Text>
+        </TouchableOpacity>
+      </View>
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}>
         <View style={styles.group}>
-          {Data.map(data => {
-            return (
-              <View key={data.id} style={styles.TopView}>
-                <View
-                  style={{
-                    borderBottomColor: '#fff',
-                    borderBottomWidth: 0.5,
-                  }}>
+          {segment && !status1 ? (
+            <Text
+              style={{
+                color: 'black',
+                justifyContent: 'center',
+                alignSelf: 'center',
+              }}>
+              {Messages}
+            </Text>
+          ) : null}
+          {segment &&
+            Data.map(data => {
+              return (
+                <View key={data.id} style={styles.TopView}>
                   <View
                     style={{
-                      justifyContent: 'space-between',
-                      flexDirection: 'row',
+                      borderBottomColor: '#fff',
+                      borderBottomWidth: 0.5,
                     }}>
                     <View
                       style={{
                         justifyContent: 'space-between',
                         flexDirection: 'row',
-                        alignItems: 'center',
                       }}>
-                      <Image
-                        source={require('../../../../assets/Profile.png')}
-                        style={styles.img}
-                      />
+                      <View
+                        style={{
+                          justifyContent: 'space-between',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Image
+                          source={require('../../../../assets/Profile.png')}
+                          style={styles.img}
+                        />
+                        <View>
+                          <Text
+                            style={{
+                              color: '#fff',
+                              fontSize: heightPercentageToDP('2.567%'),
+                            }}>
+                            Material Name
+                          </Text>
+                          <Text
+                            style={{
+                              color: '#5CE3D9',
+                              fontSize: heightPercentageToDP('2.031%'),
+                            }}>
+                            Senetor with Cap
+                          </Text>
+                        </View>
+                      </View>
                       <View>
-                        <Text
-                          style={{
-                            color: '#fff',
-                            fontSize: heightPercentageToDP('2.567%'),
-                          }}>
-                          Material Name
-                        </Text>
                         <Text
                           style={{
                             color: '#5CE3D9',
                             fontSize: heightPercentageToDP('2.031%'),
                           }}>
-                          Senetor with Cap
+                          Due In 7 Days
+                        </Text>
+                        <Text
+                          style={{
+                            color: '#fff',
+                            fontSize: heightPercentageToDP('2.655%'),
+                          }}>
+                          15,000NGN
                         </Text>
                       </View>
                     </View>
+                    <View style={styles.actionGroup}>
+                      <TouchableOpacity>
+                        <Text style={styles.actions}>
+                          <Call /> Call
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <Text style={styles.actions}>
+                          <Message /> Message
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <Text style={styles.actions}>
+                          <Cancel /> cancel
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View style={styles.reqTop}>
+                    <View style={styles.user}>
+                      <Image
+                        source={require('../../../../assets/Profile.png')}
+                        style={styles.img}
+                      />
+                      <View>
+                        <Text style={styles.usertxt}>{data.user}</Text>
+                        <Text style={styles.userMaterial}>{data.material}</Text>
+                      </View>
+                    </View>
                     <View>
-                      <Text
-                        style={{
-                          color: '#5CE3D9',
-                          fontSize: heightPercentageToDP('2.031%'),
-                        }}>
-                        Due In 7 Days
-                      </Text>
-                      <Text
-                        style={{
-                          color: '#fff',
-                          fontSize: heightPercentageToDP('2.655%'),
-                        }}>
-                        15,000NGN
-                      </Text>
+                      <Text style={styles.distance}>{data.distance}</Text>
+                      <Text style={styles.distance}>{data.size}</Text>
                     </View>
                   </View>
                   <View style={styles.actionGroup}>
@@ -133,71 +212,173 @@ const TailorPending = ({Measurements}) => {
                         <Message /> Message
                       </Text>
                     </TouchableOpacity>
+                  </View>
+                  <View
+                    style={{
+                      justifyContent: 'space-between',
+                      flexDirection: 'row',
+                    }}>
+                    <Button
+                      id={data.id}
+                      title="Complete"
+                      buttonStyle={styles.btn}
+                      disabledStyle={styles.btnT}
+                      onPress={title => {
+                        CompleteRequest(data.id);
+                      }}
+                      titleStyle={{color: '#000'}}
+                      loading={loading}
+                    />
+                    <Button
+                      id={data.id}
+                      title="Request Details"
+                      buttonStyle={styles.btn}
+                      onPress={() => {
+                        setOpenCarousel(true);
+                        ViewRequest(data.id);
+                      }}
+                      titleStyle={{color: '#000'}}
+                    />
+                  </View>
+                </View>
+              );
+            })}
+          {!segment &&
+            Data2.map(data => {
+              return (
+                <View key={data.id} style={styles.TopView}>
+                  <View
+                    style={{
+                      borderBottomColor: '#fff',
+                      borderBottomWidth: 0.5,
+                    }}>
+                    <View
+                      style={{
+                        justifyContent: 'space-between',
+                        flexDirection: 'row',
+                      }}>
+                      <View
+                        style={{
+                          justifyContent: 'space-between',
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                        }}>
+                        <Image
+                          source={require('../../../../assets/Profile.png')}
+                          style={styles.img}
+                        />
+                        <View>
+                          <Text
+                            style={{
+                              color: '#fff',
+                              fontSize: heightPercentageToDP('2.567%'),
+                            }}>
+                            Material Name
+                          </Text>
+                          <Text
+                            style={{
+                              color: '#5CE3D9',
+                              fontSize: heightPercentageToDP('2.031%'),
+                            }}>
+                            Senetor with Cap
+                          </Text>
+                        </View>
+                      </View>
+                      <View>
+                        <Text
+                          style={{
+                            color: '#5CE3D9',
+                            fontSize: heightPercentageToDP('2.031%'),
+                          }}>
+                          Due In 7 Days
+                        </Text>
+                        <Text
+                          style={{
+                            color: '#fff',
+                            fontSize: heightPercentageToDP('2.655%'),
+                          }}>
+                          15,000NGN
+                        </Text>
+                      </View>
+                    </View>
+                    <View style={styles.actionGroup}>
+                      <TouchableOpacity>
+                        <Text style={styles.actions}>
+                          <Call /> Call
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <Text style={styles.actions}>
+                          <Message /> Message
+                        </Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity>
+                        <Text style={styles.actions}>
+                          <Cancel /> cancel
+                        </Text>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <View style={styles.reqTop}>
+                    <View style={styles.user}>
+                      <Image
+                        source={require('../../../../assets/Profile.png')}
+                        style={styles.img}
+                      />
+                      <View>
+                        <Text style={styles.usertxt}>{data.user}</Text>
+                        <Text style={styles.userMaterial}>{data.material}</Text>
+                      </View>
+                    </View>
+                    <View>
+                      <Text style={styles.distance}>{data.distance}</Text>
+                      <Text style={styles.distance}>{data.size}</Text>
+                    </View>
+                  </View>
+                  <View style={styles.actionGroup}>
                     <TouchableOpacity>
                       <Text style={styles.actions}>
-                        <Cancel /> cancel
+                        <Call /> Call
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity>
+                      <Text style={styles.actions}>
+                        <Message /> Message
                       </Text>
                     </TouchableOpacity>
                   </View>
-                </View>
-
-                <View style={styles.reqTop}>
-                  <View style={styles.user}>
-                    <Image
-                      source={require('../../../../assets/Profile.png')}
-                      style={styles.img}
+                  <View
+                    style={{
+                      justifyContent: 'space-between',
+                      flexDirection: 'row',
+                    }}>
+                    <Button
+                      id={data.id}
+                      title={data.Transit ? 'Awaiting Material' : 'Sewing'}
+                      buttonStyle={styles.btn}
+                      disabled={data.Transit ? false : true}
+                      disabledStyle={styles.btnT}
+                      onPress={title => {
+                        setDispatch(true);
+                      }}
+                      titleStyle={{color: '#000'}}
                     />
-                    <View>
-                      <Text style={styles.usertxt}>{data.user}</Text>
-                      <Text style={styles.userMaterial}>{data.material}</Text>
-                    </View>
+                    <Button
+                      id={data.id}
+                      title="Request Details"
+                      buttonStyle={styles.btn}
+                      onPress={() => {
+                        setOpenCarousel(true);
+
+                        ViewRequest(data.id);
+                      }}
+                      titleStyle={{color: '#000'}}
+                    />
                   </View>
-                  <View>
-                    <Text style={styles.distance}>{data.distance}</Text>
-                    <Text style={styles.distance}>{data.size}</Text>
-                  </View>
                 </View>
-                <View style={styles.actionGroup}>
-                  <TouchableOpacity>
-                    <Text style={styles.actions}>
-                      <Call /> Call
-                    </Text>
-                  </TouchableOpacity>
-                  <TouchableOpacity>
-                    <Text style={styles.actions}>
-                      <Message /> Message
-                    </Text>
-                  </TouchableOpacity>
-                </View>
-                <View
-                  style={{
-                    justifyContent: 'space-between',
-                    flexDirection: 'row',
-                  }}>
-                  <Button
-                    id={data.id}
-                    title={data.Transit ? 'Awaiting Material' : 'Sewing'}
-                    buttonStyle={styles.btn}
-                    disabled={data.Transit ? false : true}
-                    disabledStyle={styles.btnT}
-                    onPress={title => {
-                      setDispatch(true);
-                    }}
-                    titleStyle={{color: '#000'}}
-                  />
-                  <Button
-                    id={data.id}
-                    title="Request Details"
-                    buttonStyle={styles.btn}
-                    onPress={() => {
-                      setOpenCarousel(true);
-                    }}
-                    titleStyle={{color: '#000'}}
-                  />
-                </View>
-              </View>
-            );
-          })}
+              );
+            })}
         </View>
       </ScrollView>
       <PendingModal
@@ -225,7 +406,9 @@ const TailorPending = ({Measurements}) => {
         modalVisible={openCarousel}
         closeModal={() => {
           setOpenCarousel(false);
+          setReqMessage(' ');
         }}
+        Message={reqMessages}
       />
     </SafeAreaView>
   );
@@ -237,7 +420,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     backgroundColor: '#fff',
-    // flex: 1,
+    height: heightPercentageToDP('100%'),
   },
   group: {
     paddingVertical: 19,
@@ -302,8 +485,28 @@ const styles = StyleSheet.create({
   },
   btnT: {
     backgroundColor: '#5CE3D9',
-    color: 'black',
+    // color: 'black',
     height: heightPercentageToDP('7.5%'),
     marginVertical: 10,
+  },
+  segmentContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    backgroundColor: '#fff',
+    paddingVertical: 20,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(61,119,130,.75)',
+  },
+  divider: {
+    borderWidth: 0.8,
+    borderColor: 'rgba(61,119,130,1)',
+  },
+  segment: {
+    fontSize: heightPercentageToDP('2.5%'),
+    color: 'rgba(61,119,130,1)',
+  },
+  segmentOff: {
+    fontSize: heightPercentageToDP('2.5%'),
+    color: 'rgba(61,119,130,.4)',
   },
 });

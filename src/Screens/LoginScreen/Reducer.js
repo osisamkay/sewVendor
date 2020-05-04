@@ -1,4 +1,5 @@
 import {actionType} from './Action/ActionType';
+import AsyncStorage from '@react-native-community/async-storage';
 
 const {
   LOGIN_ERROR,
@@ -7,6 +8,11 @@ const {
   RECOVER,
   RECOVER_ERROR,
   RECOVER_SUCCESS,
+  CHANGE_PASSWORD,
+  CHANGE_PASSWORD_ERROR,
+  CHANGE_PASSWORD_SUCCESS,
+  LOGOUT_USER,
+  GET_TAILOR_CAT_ID,
 } = actionType;
 
 const initialState = {
@@ -15,6 +21,8 @@ const initialState = {
   userDataInput: {},
   isError: false,
   recovered: false,
+  loading: false,
+  tailor_category_id: 0,
 };
 
 export const LoginReducer = (state = initialState, {type, payload}) => {
@@ -23,20 +31,21 @@ export const LoginReducer = (state = initialState, {type, payload}) => {
       return {
         ...state,
         userDataInput: payload,
-        registration: false,
         loading: true,
+        isLogged: false,
       };
 
     case LOGIN_SUCCESS:
+      AsyncStorage.setItem('@UserData', JSON.stringify(payload));
       return {
         ...state,
-        registrationMessage: payload,
-        registration: true,
+        userData: payload,
+        isLogged: true,
         loading: false,
       };
 
     case LOGIN_ERROR:
-      return {...state, regError: payload, isError: true, loading: false};
+      return {...state, isLogged: false, loading: false};
 
     case RECOVER:
       return {...state, loading: true, recoverd: false};
@@ -46,6 +55,29 @@ export const LoginReducer = (state = initialState, {type, payload}) => {
 
     case RECOVER_ERROR:
       return {...state, loading: false, recoverd: false};
+
+    case CHANGE_PASSWORD:
+      return {...state, loading: true, changed: false};
+
+    case CHANGE_PASSWORD_ERROR:
+      return {...state, loading: false, changed: false};
+
+    case CHANGE_PASSWORD_SUCCESS:
+      return {...state, loading: false, changed: true};
+
+    case GET_TAILOR_CAT_ID:
+      return {...state, loading: false, tailor_category_id: payload};
+
+    case LOGOUT_USER:
+      return {
+        ...state,
+        isLogged: false,
+        userData: {},
+        userDataInput: {},
+        isError: false,
+        recovered: false,
+        loading: false,
+      };
 
     default:
       return state;

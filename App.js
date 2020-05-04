@@ -11,6 +11,10 @@ import {rootReducer} from './src/reducer/rootReducer';
 import createSagaMiddleware from 'redux-saga';
 import saga from './src/saga/rootSaga';
 import {Root} from 'native-base';
+import {persistStore, persistReducer} from 'redux-persist';
+import {PersistGate} from 'redux-persist/integration/react';
+import AsyncStorage from '@react-native-community/async-storage';
+import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 
 const Stack = createStackNavigator();
 
@@ -55,16 +59,26 @@ function App() {
 
 // export default App;
 
+const persistConfig = {
+  key: 'root',
+  storage: AsyncStorage,
+  stateReconciler: autoMergeLevel2,
+  blacklist: ['SignUpReducer'],
+};
+const persistedReducer = persistReducer(persistConfig, rootReducer);
 const sagaMiddleware = createSagaMiddleware();
-
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
+let store = createStore(persistedReducer, applyMiddleware(sagaMiddleware));
+let persistor = persistStore(store);
+// const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
 sagaMiddleware.run(saga);
 export default () => {
   return (
     <Provider store={store}>
-      <Root>
-        <App />
-      </Root>
+      <PersistGate loading={null} persistor={persistor}>
+        <Root>
+          <App />
+        </Root>
+      </PersistGate>
     </Provider>
   );
 };

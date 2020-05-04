@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import Profile from './assets/Profile.svg';
 import {
   DrawerContentScrollView,
@@ -7,8 +7,28 @@ import {
 } from '@react-navigation/drawer';
 import {View, Text, StyleSheet} from 'react-native';
 import {heightPercentageToDP} from 'react-native-responsive-screen';
+import AsyncStorage from '@react-native-community/async-storage';
+import {useDispatch, useSelector} from 'react-redux';
+import {logoutUser} from './src/Screens/LoginScreen/Action/Action';
 
-function CustomDrawerContent({progress, ...rest}) {
+function CustomDrawerContent({progress, navigation, ...rest}) {
+  const [visible, setVisible] = useState(false);
+  const [name, setName] = useState(false);
+  // const [result] = useProfile();
+  const {loading, userData, isLogged} = useSelector(
+    state => state.LoginReducer,
+  );
+
+  const dispatch = useDispatch();
+  //
+  useEffect(() => {
+    if (isLogged) {
+      let firstnamw = userData.profile.first_name;
+      let lastname = userData.profile.last_name;
+      const n = firstnamw + ' ' + lastname;
+      setName(n);
+    }
+  }, [isLogged, userData]);
   return (
     <DrawerContentScrollView {...rest}>
       <View>
@@ -16,13 +36,22 @@ function CustomDrawerContent({progress, ...rest}) {
           <View style={styles.container}>
             <Profile />
             <View>
-              <Text style={styles.name}>NAME HERE</Text>
+              <Text style={styles.name}>{name}</Text>
               <Text style={styles.number}>4.46</Text>
             </View>
           </View>
         </View>
 
         <DrawerItemList {...rest} labelStyle={styles.Label} />
+        <DrawerItem
+          label="Logout"
+          labelStyle={styles.Label}
+          onPress={() => {
+            AsyncStorage.clear();
+            dispatch(logoutUser('new'));
+            navigation.navigate('Onboarding');
+          }}
+        />
       </View>
     </DrawerContentScrollView>
   );

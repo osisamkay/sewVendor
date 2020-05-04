@@ -22,6 +22,7 @@ import CalendarPicker from 'react-native-calendar-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 import CarouselModal from './CarouselModal';
+import useComplete from './hooks/useComplete';
 
 if (
   Platform.OS === 'android' &&
@@ -49,6 +50,7 @@ const CompleteTailor = ({route, navigation}) => {
   const [carouselModal, setCarouselModal] = useState(false);
   const [display, setDisplay] = useState(false);
   const [user, SetUser] = useState('');
+  const [loading, results] = useComplete();
 
   const updateSearch = search => {
     let value = search;

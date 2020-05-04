@@ -8,28 +8,31 @@ import {
   TouchableOpacity,
 } from 'react-native';
 import {Button} from 'react-native-elements';
-import Icon from 'react-native-vector-icons/FontAwesome';
-import Logo from '../../../assets/Logo.svg';
+
+import Icon from 'react-native-vector-icons/Feather';
 import {
   widthPercentageToDP as wp,
   heightPercentageToDP as hp,
 } from 'react-native-responsive-screen';
 import Inputs from '../../components/Inputs';
-import {RecoverInput} from './RecoverInput';
-import {recoverPassword} from '../LoginScreen/Action/Action';
+import {RecoverInput, RecoverTokenInput} from './RecoverInput';
+import {
+  recoverPassword,
+  changePasswordWithToken,
+} from '../LoginScreen/Action/Action';
 
-const Recovery = ({navigation}) => {
+const ChangePassword = ({navigation}) => {
   const [values, setValues] = useState({});
   const [show, setShow] = useState(true);
-  const {loading, recovered} = useSelector(state => state.LoginReducer);
+  const {loading, changed} = useSelector(state => state.LoginReducer);
 
   const dispatch = useDispatch();
 
   useEffect(() => {
-    if (recovered) {
-      navigation.navigate('ChangeScreen');
+    if (changed) {
+      navigation.navigate('LoginScreen');
     }
-  }, [navigation, recovered]);
+  }, [navigation, changed]);
 
   return (
     <SafeAreaView>
@@ -40,7 +43,8 @@ const Recovery = ({navigation}) => {
         </View>
         <View style={styles.recover}>
           <View style={styles.middle}>
-            {RecoverInput.map(data => {
+            <Text style={styles.header}>Change Password</Text>
+            {RecoverTokenInput.map(data => {
               return (
                 <Inputs
                   placeholder={data.placeholder}
@@ -56,12 +60,23 @@ const Recovery = ({navigation}) => {
                 />
               );
             })}
+            <TouchableOpacity
+              style={styles.p}
+              onPress={() => {
+                setShow(!show);
+              }}>
+              <Icon
+                name={!show ? 'eye-off' : 'eye'}
+                size={20}
+                color="#5CE3D9"
+              />
+            </TouchableOpacity>
             <Button
-              title="Recover Password"
-              buttonStyle={styles.button}
+              title="Change Password"
+              buttonStyle={loading ? styles.buttonGray : styles.button}
               titleStyle={styles.btnTxt}
               onPress={() => {
-                dispatch(recoverPassword(values));
+                dispatch(changePasswordWithToken(values));
               }}
               loading={loading}
             />
@@ -73,7 +88,7 @@ const Recovery = ({navigation}) => {
   );
 };
 
-export default Recovery;
+export default ChangePassword;
 
 const styles = StyleSheet.create({
   container: {
@@ -113,12 +128,31 @@ const styles = StyleSheet.create({
   button: {
     alignSelf: 'center',
     marginTop: 20,
-    backgroundColor: '#000',
+    backgroundColor: '#fff',
     width: 160,
     height: 45,
     alignItems: 'center',
     justifyContent: 'center',
-    borderRadius: 5,
+    borderRadius: 25,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 1,
+    },
+    shadowOpacity: 0.22,
+    shadowRadius: 2.22,
+
+    elevation: 3,
+  },
+  buttonGray: {
+    alignSelf: 'center',
+    marginTop: 20,
+    backgroundColor: '#707070',
+    width: 160,
+    height: 45,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 25,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -130,7 +164,7 @@ const styles = StyleSheet.create({
     elevation: 3,
   },
   btnTxt: {
-    color: '#fff',
+    color: 'rgba(61, 119, 130, 1)',
     fontSize: 14,
   },
   middle: {
@@ -155,5 +189,17 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: hp('78%'),
     left: 40,
+  },
+  header: {
+    color: '#5CE3D9',
+    fontSize: hp('3%'),
+    paddingBottom: hp('8%'),
+    textAlign: 'center',
+    // width: wp('40%'),
+  },
+  p: {
+    position: 'absolute',
+    top: hp('54%'),
+    right: wp('0%'),
   },
 });

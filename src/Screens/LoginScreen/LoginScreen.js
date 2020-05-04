@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useSelector, useDispatch} from 'react-redux';
 import {
   View,
@@ -24,9 +24,28 @@ import {loginUser} from './Action/Action';
 const LoginScreen = ({navigation}) => {
   const [values, setValues] = useState({});
   const [show, setShow] = useState(true);
-  const {loading, registration} = useSelector(state => state.SignUpReducer);
-
+  const {loading, userData, isLogged} = useSelector(
+    state => state.LoginReducer,
+  );
+  console.log(userData);
   const dispatch = useDispatch();
+  const propOwn = Object.getOwnPropertyNames(values);
+
+  useEffect(() => {
+    if (isLogged) {
+      let reg_type = userData.profile.vendor_category_id;
+      console.log(reg_type);
+      if (reg_type == 1) {
+        navigation.navigate('Measurer');
+      } else if (reg_type == 2) {
+        navigation.navigate('Tailor');
+      } else if (reg_type == 3) {
+        navigation.navigate('Vendor');
+      } else {
+        null;
+      }
+    }
+  }, [navigation, isLogged, userData]);
   return (
     <SafeAreaView>
       <KeyboardAvoidingView
@@ -74,14 +93,13 @@ const LoginScreen = ({navigation}) => {
 
             <Button
               loading={loading}
+              buttonStyle={styles.button}
+              disabled={propOwn.length < 2 ? true : false}
               onPress={() => {
                 dispatch(loginUser(values));
-                // navigation.navigate('Measurer');
               }}
               title="Sign In"
-              buttonStyle={styles.button}
               titleStyle={styles.btnTxt}
-              raised
             />
           </View>
           <View style={styles.small} />
