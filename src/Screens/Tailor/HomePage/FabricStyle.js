@@ -7,11 +7,27 @@ import {
 } from 'react-native-responsive-screen';
 import Edit from '../../../../assets/editBtn.svg';
 
-const FabricStyle = ({name, rating, location, Price, onSelect, status}) => {
+const FabricStyle = ({
+  name,
+  rating,
+  location,
+  Price,
+  onSelect,
+  status,
+  image,
+}) => {
   return (
-    <View>
+    <TouchableOpacity>
       <Card style={styles.container} onPress={onSelect}>
         <View style={styles.cardheader}>
+          <Image
+            source={{
+              uri: `${image}`,
+            }}
+            style={styles.img}
+            resizeMethod="auto"
+            resizeMode="cover"
+          />
           <View style={!status ? styles.hide : styles.add}>
             <Edit />
           </View>
@@ -27,7 +43,7 @@ const FabricStyle = ({name, rating, location, Price, onSelect, status}) => {
           </View>
         </CardItem>
       </Card>
-    </View>
+    </TouchableOpacity>
   );
 };
 
@@ -82,5 +98,11 @@ const styles = StyleSheet.create({
   },
   hide: {
     display: 'none',
+  },
+  img: {
+    height: heightPercentageToDP('15.6%'),
+    width: widthPercentageToDP('38%'),
+    borderTopRightRadius: 11,
+    borderTopLeftRadius: 11,
   },
 });

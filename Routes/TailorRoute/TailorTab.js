@@ -25,6 +25,7 @@ import TailorPendingRoute from './PendingRoute';
 import UpdateInfo from '../../src/Screens/Drawer/UpdateInfo';
 import WithdrawOption from '../../src/Screens/Drawer/WithdrawOption';
 import Onboarding from '../OnboardingRoute';
+import BankSettings from '../../src/Screens/Drawer/BankSetting';
 const Tab = createBottomTabNavigator();
 const Drawer = createDrawerNavigator();
 
@@ -93,6 +94,15 @@ export default function TailorTab() {
         component={WithdrawOption}
         options={{
           drawerLabel: 'Withdraw Option',
+          headerTitle: 'Dashboard',
+          headerShown: true,
+        }}
+      />
+      <Drawer.Screen
+        name="Bank Settings"
+        component={BankSettings}
+        options={{
+          drawerLabel: 'Bank Settings',
           headerTitle: 'Dashboard',
           headerShown: true,
         }}

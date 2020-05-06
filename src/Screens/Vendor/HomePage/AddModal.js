@@ -60,7 +60,6 @@ const AddModal = ({
   const [data, setData] = useState(null);
 
   let {access_token} = userData;
-  console.log(access_token);
 
   const requestCameraPermission = async () => {
     try {
@@ -128,10 +127,10 @@ const AddModal = ({
     setLoading(true);
     try {
       let AddData = new FormData();
-      data.append('image', image);
-      data.append('title', values.title);
-      data.append('price_per_yard', values.price_per_yard);
-      data.append('quantity_in_stock', values.quantity_in_stock);
+      AddData.append('image', image);
+      AddData.append('title', values.title);
+      AddData.append('price_per_yard', values.price_per_yard);
+      AddData.append('quantity_in_stock', values.quantity_in_stock);
       const response = await Instance.post(
         'vendors/materials/add?provider=vendor',
         AddData,

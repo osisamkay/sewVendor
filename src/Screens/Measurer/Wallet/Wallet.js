@@ -15,6 +15,7 @@ import {
 import {Button, Textarea, Card, CardItem} from 'native-base';
 import WalletModal from './WalletModal';
 import Ok from '../../../../assets/ok.svg';
+import usePurse from '../../generalHooks/usePurse';
 
 const data = [
   {name: 'Sew Points', time: '34 mins ago', amount: 'N 3100'},
@@ -29,6 +30,7 @@ const Wallet = ({navigation}) => {
   const [withdrawn, setWithdrawn] = useState(false);
   const [all, setAll] = useState(false);
   const [done, setDone] = useState(false);
+  const [purse] = usePurse();
 
   const handlePending = () => {
     setPending(true);
@@ -61,7 +63,8 @@ const Wallet = ({navigation}) => {
           <View style={styles.TopView}>
             <Text style={styles.bal}>Sew Balance</Text>
             <Text style={styles.amt}>
-              20,890<Text style={{fontSize: 16}}>NGN</Text>
+              {purse.current_balance}
+              <Text style={{fontSize: 16}}>NGN</Text>
             </Text>
             <Text style={styles.dueDate}>
               Next withdrawal due 7th April 2020

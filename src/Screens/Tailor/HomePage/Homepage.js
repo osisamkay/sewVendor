@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   FlatList,
   PermissionsAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import {Button, Divider} from 'react-native-elements';
 import {
@@ -21,20 +22,39 @@ import GreyWallet from '../../../../assets/Group2633.svg';
 import Wallet from '../../../../assets/Group 2634.svg';
 import Add from '../../../../assets/Add Button.svg';
 import Archivment from './Archivment';
-import {Data} from './ArchivmentData';
 import StatsLabel from '../../../components/StatsLabel';
 import StarRating from 'react-native-star-rating';
 import FabricStyle from './FabricStyle';
 import {FabricData} from './FabricData';
 import AddModal from './AddModal';
 import ImagePicker from 'react-native-image-picker';
+import useVendorHome from './useVendorHome';
+import usePurse from '../../generalHooks/usePurse';
+import useAnalytics from '../../generalHooks/useAnalytics';
+import Achievements from '../../../../assets/archivement.svg';
+import Accepted from '../../../../assets/VendorRequest.svg';
+import Measurement from '../../../../assets/accepted.svg';
 
 const TailorHomepage = ({route, navigation}) => {
   const [visible, setVisible] = useState(false);
   const [add, setAdd] = useState(false);
-  const [switchValue, setSwitchValue] = useState(false);
+  // const [online, setonline] = useState(false);
   const [image, setImage] = useState({});
   const [images, setImages] = useState(false);
+  const [loading, handleToggle, online, profile, styled] = useVendorHome();
+  const [accepted, completed, reviews, message] = useAnalytics();
+
+  const Data = [
+    {svg: <Accepted />, value: accepted, text: 'Requests Accepted'},
+    {
+      svg: <Measurement />,
+      value: completed,
+      text: 'Materials Delivered (89.5%)',
+    },
+    {svg: <Achievements />, value: 103, text: 'Achievements Unlocked'},
+  ];
+
+  const [purse] = usePurse();
   const options = {};
 
   const requestCameraPermission = async () => {
@@ -123,12 +143,12 @@ const TailorHomepage = ({route, navigation}) => {
           <View style={styles.TopView}>
             <View style={styles.status}>
               <Text style={styles.TopTxt}>
-                {switchValue ? (
+                {online ? (
                   <View style={styles.spot} />
                 ) : (
                   <View style={styles.greySpot} />
                 )}
-                {switchValue ? ' Online' : ' Offline'}
+                {online ? ' Online' : ' Offline'}
               </Text>
               <View style={styles.Switches}>
                 <Switches
@@ -140,22 +160,20 @@ const TailorHomepage = ({route, navigation}) => {
                   sliderWidth={widthPercentageToDP('11%')}
                   colorSwitchOn="#5CE3D9"
                   colorSwitchOff="#707070"
-                  onChange={() => setSwitchValue(!switchValue)}
-                  borderColor={switchValue ? '#5CE3D9' : '#707070'}
-                  value={switchValue}
+                  onChange={handleToggle}
+                  borderColor={online ? '#5CE3D9' : '#707070'}
+                  value={online}
                   animationDuration={100}
                 />
               </View>
             </View>
             <View style={styles.Wallet}>
-              {switchValue ? <Wallet /> : <GreyWallet />}
+              {online ? <Wallet /> : <GreyWallet />}
             </View>
             <Text style={styles.bal}>Sew Balance</Text>
-            <Text style={switchValue ? styles.amt : styles.amtgrey}>
-              20,890
-              <Text style={switchValue ? styles.amts : styles.amtsgrey}>
-                NGN
-              </Text>
+            <Text style={online ? styles.amt : styles.amtgrey}>
+              {purse.current_balance}
+              <Text style={online ? styles.amts : styles.amtsgrey}>NGN</Text>
             </Text>
             <Text style={styles.dueDate}>Next withdrawal due 7th April 20</Text>
           </View>
@@ -175,27 +193,33 @@ const TailorHomepage = ({route, navigation}) => {
             <View style={styles.stats}>
               <Text style={styles.stats_title}>Reviews</Text>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
-                <Text style={styles.stats_rates}>87 Reviews | 4.0</Text>
+                <Text style={styles.stats_rates}>0 Reviews | 0</Text>
                 <StarRating
                   disabled={false}
                   maxStars={5}
-                  rating={4}
+                  rating={0}
                   fullStarColor="#5CE3D9"
                   emptyStarColor="#fff"
                   starSize={15}
                 />
               </View>
             </View>
-            {data.map(data => {
-              return (
-                <StatsLabel
-                  time={data.time}
-                  day={data.feedback}
-                  title={data.name}
-                  rating={data.rate}
-                />
-              );
-            })}
+            {reviews.length <= 0 ? (
+              <Text style={styles.msg}>{message}</Text>
+            ) : (
+              <ActivityIndicator />
+            )}
+            {reviews.length > 0 &&
+              data.map(data => {
+                return (
+                  <StatsLabel
+                    time={data.time}
+                    day={data.feedback}
+                    title={data.name}
+                    rating={data.rate}
+                  />
+                );
+              })}
           </View>
           <View style={styles.materialContainer}>
             <View style={styles.materialContainerTop}>
@@ -208,14 +232,15 @@ const TailorHomepage = ({route, navigation}) => {
               </TouchableOpacity>
             </View>
             <View style={styles.fabrics}>
-              {FabricData.map(item => {
+              {styled.map(item => {
                 return (
                   <FabricStyle
                     status={true}
-                    name={item.name}
+                    name={item.title}
                     location={item.location}
                     rating={item.rating}
                     Price={item.Price}
+                    image={item.img_url}
                     onSelect={() => {
                       // handleSelected(item);
                     }}
@@ -401,5 +426,10 @@ const styles = StyleSheet.create({
   },
   bigBtnText: {
     fontSize: heightPercentageToDP('6%'),
+  },
+  msg: {
+    color: '#fff',
+    textAlign: 'center',
+    paddingVertical: heightPercentageToDP('2%'),
   },
 });

@@ -4,3 +4,4 @@ export const InputData = [
   {placeholder: 'Price/Yard', title: 'price_per_yard'},
   {placeholder: 'Quantity', title: 'quantity_in_stock'},
 ];
+export const InputData2 = [{placeholder: 'Style Name', title: 'title'}];

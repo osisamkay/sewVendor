@@ -8,19 +8,28 @@ import {
   UIManager,
   LayoutAnimation,
   Modal,
+  TouchableOpacity,
   TextInput,
   SafeAreaView,
   Image,
+  PermissionsAndroid,
+  RefreshControl,
 } from 'react-native';
 import {Header, Divider} from 'react-native-elements';
 import {
   heightPercentageToDP,
   widthPercentageToDP,
 } from 'react-native-responsive-screen';
+import {useSelector} from 'react-redux';
 import Ionicons from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import {Button, Textarea, Card} from 'native-base';
+import {Textarea, Card} from 'native-base';
 import Camera from '../../../../assets/camera.svg';
+import {InputData2} from '../../Vendor/HomePage/inputData';
+import ImagePicker from 'react-native-image-picker';
+import Instance from '../../../Api/Instance';
+import {Toast} from 'native-base';
+import {Button} from 'react-native-elements';
 
 if (
   Platform.OS === 'android' &&
@@ -33,10 +42,135 @@ const AddModal = ({
   navigation,
   modalVisible,
   closeModal,
-  Add,
-  images,
-  image,
+  submit,
+  dataInput,
 }) => {
+  const [values, setValues] = useState({});
+  const [image, setImage] = useState({});
+  const [images, setImages] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const {userData} = useSelector(state => state.LoginReducer);
+  const [data, setData] = useState(null);
+
+  let {access_token} = userData;
+
+  const requestCameraPermission = async () => {
+    try {
+      const granted = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.CAMERA,
+        {
+          title: 'Cool Photo App Camera Permission',
+          message:
+            'Cool Photo App needs access to your camera ' +
+            'so you can take awesome pictures.',
+          buttonNeutral: 'Ask Me Later',
+          buttonNegative: 'Cancel',
+          buttonPositive: 'OK',
+        },
+      );
+      if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+        handleImagePicker();
+      } else {
+        alert('Camera permission denied');
+      }
+    } catch (err) {
+      console.warn(err);
+    }
+  };
+
+  const options = {mediaType: 'Photo'};
+
+  const handleImagePicker = () => {
+    return ImagePicker.showImagePicker(options, response => {
+      // console.log('Response = ', response);
+
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.error) {
+        console.log('ImagePicker Error: ', response.error);
+      } else if (response.customButton) {
+        console.log('User tapped custom button: ', response.customButton);
+      } else {
+        console.log(response);
+        // const source = {uri: response.uri};
+        // You can also display the image using data:
+        // const source = {uri: 'data:image/jpeg;base64,' + response.data};
+        const source = {
+          uri: response.uri,
+          type: response.type,
+          name: response.fileName,
+        };
+        setImage(source);
+        setImages(true);
+
+        setData(response.data);
+        setValues({...values, image: source});
+      }
+    });
+  };
+
+  const Style = {
+    width: widthPercentageToDP('88%'),
+    alignSelf: 'center',
+    borderRadius: 6,
+  };
+
+  const upload = async () => {
+    setLoading(true);
+
+    try {
+      let AddData = new FormData();
+      AddData.append('image', image);
+      AddData.append('title', values.title);
+      const response = await Instance.post(
+        'styles/upload?provider=vendor',
+        AddData,
+        {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+            // 'Content-Type': 'multipart/form-data',
+          },
+        },
+      );
+      let s = response.data.status;
+      let m = response.data.message;
+      console.log(response, s, m);
+      if (s) {
+        setValues({});
+        setImage({});
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'success',
+          duration: 5000,
+          style: Style,
+        });
+        setLoading(false);
+      } else {
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'danger',
+          duration: 5000,
+          style: Style,
+        });
+        setLoading(false);
+      }
+    } catch (err) {
+      Toast.show({
+        text: 'Something went wrong',
+        buttonText: 'Okay',
+        position: 'top',
+        type: 'danger',
+        duration: 5000,
+        style: Style,
+      });
+      setLoading(false);
+    }
+  };
   return (
     <SafeAreaView>
       <Modal
@@ -47,13 +181,25 @@ const AddModal = ({
         <ScrollView contentContainerStyle={styles.container}>
           <View style={styles.group}>
             <View>
-              <Card style={styles.test}>
-                <TextInput style={styles.input} placeholder="Style Name" />
-              </Card>
-              <Card style={styles.test}>
-                <TextInput style={styles.input} placeholder="Retailer Name" />
-              </Card>
+              {InputData2.map(data => {
+                return (
+                  <Card style={styles.test}>
+                    <TextInput
+                      key={data.placeholder}
+                      placeholder={data.placeholder}
+                      onChangeText={value => {
+                        let input = data.title;
 
+                        setValues({
+                          ...values,
+                          [input]: value,
+                        });
+                        console.log(values);
+                      }}
+                    />
+                  </Card>
+                );
+              })}
               <View style={styles.camera}>
                 {images === false ? (
                   <Camera />
@@ -61,17 +207,25 @@ const AddModal = ({
                   <Image source={image} style={styles.imaged} />
                 )}
               </View>
-              <Button style={styles.addImg} onPress={Add}>
-                <Text style={styles.addImgTxt}>Add photo</Text>
-              </Button>
+              <Button
+                title="Add Photo"
+                buttonStyle={styles.addImg}
+                titleStyle={styles.addImgTxt}
+                onPress={requestCameraPermission}
+              />
             </View>
             <View style={styles.saveBtnGrp}>
-              <Button style={styles.saveBtn} onPress={closeModal}>
-                <Text style={styles.saveBtnTxt}>Add</Text>
-              </Button>
-              <Button style={styles.saveBtn} onPress={closeModal}>
-                <Text style={styles.saveBtnTxt}>Cancel</Text>
-              </Button>
+              <Button
+                title="Add"
+                buttonStyle={styles.saveBtn}
+                loading={loading}
+                onPress={upload}
+              />
+              <Button
+                title="Cancel"
+                buttonStyle={styles.saveBtn}
+                onPress={closeModal}
+              />
             </View>
           </View>
         </ScrollView>
@@ -204,5 +358,8 @@ const styles = StyleSheet.create({
     height: heightPercentageToDP('5.8%'),
     borderColor: 'rgba(0,0,0,0.4)',
     borderWidth: 0.5,
+  },
+  addImgTxt: {
+    color: 'black',
   },
 });

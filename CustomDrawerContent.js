@@ -42,7 +42,28 @@ function CustomDrawerContent({progress, navigation, ...rest}) {
           </View>
         </View>
 
-        <DrawerItemList {...rest} labelStyle={styles.Label} />
+        {/* <DrawerItemList {...rest} labelStyle={styles.Label} /> */}
+        <DrawerItem
+          label="Update Info"
+          labelStyle={styles.Label}
+          onPress={() => {
+            navigation.navigate('UpdateInfo');
+          }}
+        />
+        <DrawerItem
+          label="Withdraw Options"
+          labelStyle={styles.Label}
+          onPress={() => {
+            navigation.navigate('WithdrawOption');
+          }}
+        />
+        <DrawerItem
+          label="Bank Settings"
+          labelStyle={styles.Label}
+          onPress={() => {
+            navigation.navigate('Bank Settings');
+          }}
+        />
         <DrawerItem
           label="Logout"
           labelStyle={styles.Label}
