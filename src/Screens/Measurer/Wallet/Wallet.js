@@ -7,6 +7,7 @@ import {
   StatusBar,
   ScrollView,
   Modal,
+  ActivityIndicator,
 } from 'react-native';
 import {
   heightPercentageToDP,
@@ -29,8 +30,16 @@ const Wallet = ({navigation}) => {
   const [pending, setPending] = useState(true);
   const [withdrawn, setWithdrawn] = useState(false);
   const [all, setAll] = useState(false);
-  const [done, setDone] = useState(false);
-  const [purse] = usePurse();
+  // const [done, setDone] = useState(false);
+  const [
+    loading,
+    purse,
+    withrawalRequest,
+    done,
+    setDone,
+    pendingR,
+    history,
+  ] = usePurse();
 
   const handlePending = () => {
     setPending(true);
@@ -75,6 +84,7 @@ const Wallet = ({navigation}) => {
                 setModalView(true);
               }}>
               <Text style={styles.saveBtnTxt}>Withdraw</Text>
+              {loading && <ActivityIndicator />}
             </Button>
           </View>
           <View style={styles.btnGroup}>
@@ -115,13 +125,15 @@ const Wallet = ({navigation}) => {
         </View>
       </ScrollView>
       <WalletModal
+        amount={purse.current_balance}
         modalVisible={modalView}
         closeModal={() => {
           setModalView(false);
         }}
         Proceed={() => {
           setModalView(false);
-          setDone(true);
+          // withrawalRequest(purse.current_balance);
+          withrawalRequest('100');
         }}
       />
       <Modal animationType="fade" transparent={false} visible={done}>
@@ -130,7 +142,7 @@ const Wallet = ({navigation}) => {
             <View style={styles.headerAddContainer}>
               <Ok />
               <Text style={styles.addedText}>
-                15,000NGN Has Been Sent To Your Account
+                {purse.current_balance}NGN Has Been Sent To Your Account
               </Text>
               <Text style={styles.addedTextsub}>
                 10% has been deducted from your Sew Wallet

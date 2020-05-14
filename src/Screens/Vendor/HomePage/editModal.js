@@ -24,12 +24,14 @@ import Ionicons from 'react-native-vector-icons/FontAwesome';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Card, Form} from 'native-base';
 import Camera from '../../../../assets/camera.svg';
-import {InputData} from './inputData';
+// import {InputData} from './inputData';
 import ImagePicker from 'react-native-image-picker';
 import {Toast} from 'native-base';
 import Instance from '../../../Api/Instance';
 import {Alert} from 'react-native';
 import {Button} from 'react-native-elements';
+import Popover from 'react-native-popover-view';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 if (
   Platform.OS === 'android' &&
@@ -44,21 +46,21 @@ function wait(timeout) {
   });
 }
 
-const AddModal = ({
+const EditModal = ({
   navigation,
   modalVisible,
   closeModal,
   submit,
   dataInput,
+  reload,
 }) => {
   const [values, setValues] = useState({});
   const [image, setImage] = useState({});
   const [images, setImages] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [refreshing, setRefreshing] = useState(false);
+  const [pop, setPop] = useState(false);
   const {userData} = useSelector(state => state.LoginReducer);
   const [data, setData] = useState(null);
-
   let {access_token} = userData;
 
   const requestCameraPermission = async () => {
@@ -146,7 +148,7 @@ const AddModal = ({
       console.log(response, s, m);
       if (s) {
         setValues({});
-        closeModal();
+        setImage({});
         Toast.show({
           text: m,
           buttonText: 'Okay',
@@ -156,7 +158,6 @@ const AddModal = ({
           style: Style,
         });
         setLoading(false);
-        onRefresh();
       } else {
         Toast.show({
           text: m,
@@ -181,29 +182,115 @@ const AddModal = ({
     }
   };
 
-  const onRefresh = React.useCallback(() => {
-    setRefreshing(true);
+  const handleDelete = data => {
+    setLoading(true);
+    setPop(false);
+    console.log(data);
+    const deleteReq = new Promise(res => {
+      res(
+        Instance.delete('vendors/materials/delete?provider=vendor', {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+          data: {
+            material_id: data,
+          },
+        }),
+      );
+    });
+    deleteReq
+      .then(({data: data}) => {
+        let s = data.status;
+        let m = data.message;
+        if (s) {
+          setLoading(false);
+          closeModal();
+          Toast.show({
+            text: m,
+            buttonText: 'Okay',
+            position: 'top',
+            type: 'success',
+            duration: 5000,
+            style: Style,
+          });
+        } else {
+          setLoading(false);
+          Toast.show({
+            text: m,
+            buttonText: 'Okay',
+            position: 'top',
+            type: 'danger',
+            duration: 5000,
+            style: Style,
+          });
+        }
+      })
+      .catch(err => {
+        setLoading(false);
+        alert(err);
+      });
+  };
 
-    wait(20).then(() => setRefreshing(false));
-  }, []);
+  const InputData = [
+    {placeholder: dataInput.title, title: 'title'},
+    //   {placeholder: 'Material Type', title: 'fabric_type_id'},
+    {
+      placeholder: `NGN ${dataInput.price_per_yard} Per Yard`,
+      title: 'price_per_yard',
+    },
+    {
+      placeholder: `${dataInput.quantity_in_stock} Left in Stock`,
+      title: 'quantity_in_stock',
+    },
+  ];
+  const urlImage = {uri: dataInput.img_url};
+  console.log(dataInput);
 
   return (
     <SafeAreaView style={{flex: 1}}>
       <Modal
         animationType="fade"
         transparent={true}
-        hardwareAccelerated
         visible={modalVisible}
-        onDismiss={() => alert('onDismiss!')}
-        onRequestClose={() => alert('onRequestClose!')}>
+        onDismiss={reload}>
         <ScrollView
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
           contentContainerStyle={styles.container}
           showsHorizontalScrollIndicator={false}>
           <Form>
             <View style={styles.group}>
+              <View
+                style={{
+                  justifyContent: 'space-between',
+                  flexDirection: 'row',
+                  paddingVertical: 10,
+                }}>
+                <Text
+                  style={
+                    dataInput.approval === 'Approved'
+                      ? {
+                          color: 'green',
+                          fontSize: heightPercentageToDP('1.95%'),
+                        }
+                      : {
+                          color: 'red',
+                          fontSize: heightPercentageToDP('1.95%'),
+                        }
+                  }>
+                  <Icon name="circle" /> {dataInput.approval}
+                </Text>
+                <TouchableOpacity
+                  onPress={() => {
+                    setPop(true);
+                  }}>
+                  <Text
+                    style={{
+                      color: 'red',
+                      fontSize: heightPercentageToDP('1.95%'),
+                    }}>
+                    <Icon name="trash" size={18} /> Delete
+                  </Text>
+                </TouchableOpacity>
+              </View>
               <View>
                 {InputData.map(data => {
                   return (
@@ -227,7 +314,7 @@ const AddModal = ({
 
                 <View style={styles.camera}>
                   {images === false ? (
-                    <Camera />
+                    <Image source={urlImage} style={styles.imaged} />
                   ) : (
                     // <Text>upload image</Text>
                     <Image source={image} style={styles.imaged} />
@@ -242,7 +329,7 @@ const AddModal = ({
               </View>
               <View style={styles.saveBtnGrp}>
                 <Button
-                  title="Add"
+                  title="Update"
                   buttonStyle={styles.saveBtn}
                   loading={loading}
                   onPress={upload}
@@ -256,12 +343,58 @@ const AddModal = ({
             </View>
           </Form>
         </ScrollView>
+        <Popover
+          isVisible={pop}
+          //   fromView={this.touchable}
+          onRequestClose={() => setPop(false)}>
+          <View style={{padding: 20}}>
+            <Text
+              style={{
+                color: 'red',
+                fontSize: heightPercentageToDP('2.5%'),
+                borderBottomWidth: 1,
+              }}>
+              Warning
+            </Text>
+            <View>
+              <Text
+                style={{
+                  fontSize: heightPercentageToDP('1.875%'),
+                  paddingVertical: 10,
+                }}>
+                Are you sure you want to delete {dataInput.title}?
+              </Text>
+              <View style={styles.saveBtnGrp}>
+                <Button
+                  title="Yes"
+                  buttonStyle={styles.saveBtn}
+                  loading={loading}
+                  onPress={() => {
+                    handleDelete(dataInput.id);
+                  }}
+                />
+                <Button
+                  title="Cancel"
+                  buttonStyle={styles.saveBtn}
+                  onPress={() => {
+                    setPop(false);
+                  }}
+                />
+              </View>
+            </View>
+          </View>
+        </Popover>
       </Modal>
+      <Spinner
+        visible={loading}
+        textContent={'Please Wait...'}
+        textStyle={styles.spinnerTextStyle}
+      />
     </SafeAreaView>
   );
 };
 
-export default AddModal;
+export default EditModal;
 
 const styles = StyleSheet.create({
   maiHeaderTxt: {

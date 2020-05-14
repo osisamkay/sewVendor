@@ -12,6 +12,7 @@ import {
   TextInput,
   SafeAreaView,
   Image,
+  ActivityIndicator,
 } from 'react-native';
 import {Header, Divider} from 'react-native-elements';
 import {
@@ -22,9 +23,13 @@ import Ionicons from 'react-native-vector-icons/FontAwesome';
 import {Picker} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button, Textarea, Card} from 'native-base';
+import useWithdrawals from '../generalHooks/useWithdrawals';
+import useBank from '../generalHooks/useBank';
 
 const WithdrawOption = ({navigation, closeModal, images, Add, image}) => {
   const [frequency, setFrequency] = useState('Frequency');
+  const [loading, options, currentBank, withrawalOption] = useWithdrawals();
+
   return (
     <SafeAreaView style={{flex: 1}}>
       <Header
@@ -75,13 +80,18 @@ const WithdrawOption = ({navigation, closeModal, images, Add, image}) => {
                 onValueChange={value => {
                   setFrequency(value);
                 }}>
-                <Picker.Item label="Frequencey" value="key0" />
-                <Picker.Item label="Weekly" value="key1" />
-                <Picker.Item label="Bi Monthly" value="key2" />
-                <Picker.Item label="Monthly" value="key3" />
+                {options.map(data => {
+                  return (
+                    <Picker.Item
+                      label={data.frequency}
+                      value={data.id}
+                      key={data.id}
+                    />
+                  );
+                })}
               </Picker>
             </Card>
-            <Card style={styles.test}>
+            {/* <Card style={styles.test}>
               <Picker
                 mode="dropdown"
                 // iosIcon={<Icon name="arrow-down" />}
@@ -92,14 +102,25 @@ const WithdrawOption = ({navigation, closeModal, images, Add, image}) => {
                 onValueChange={value => {
                   setFrequency(value);
                 }}>
-                <Picker.Item label="Stanbic Bank" value="key1" />
-                <Picker.Item label="UBA" value="key2" />
-                <Picker.Item label="Gtbank" value="key3" />
+                {currentBank.map(data => {
+                  return (
+                    <Picker.Item
+                      label={data.bank.name}
+                      value={data.id}
+                      key={data.id}
+                    />
+                  );
+                })}
               </Picker>
-            </Card>
+            </Card> */}
           </View>
+          {loading && <ActivityIndicator size={30} />}
           <View style={styles.saveBtnGrp}>
-            <Button style={styles.saveBtn} onPress={closeModal}>
+            <Button
+              style={styles.saveBtn}
+              onPress={() => {
+                withrawalOption(frequency);
+              }}>
               <Text style={styles.saveBtnTxt}>Update</Text>
             </Button>
           </View>

@@ -15,15 +15,19 @@ const Splash = ({navigation}) => {
     state => state.LoginReducer,
   );
 
+  console.log(userData);
+
   useEffect(() => {
     if (isLogged) {
-      let reg_type = userData.profile.vendor_category_id;
+      let reg_type = userData.profile.reg_type_id;
+      let reg_type2 = userData.profile.vendor_category_id;
+
       console.log(reg_type);
-      if (reg_type == 1) {
+      if (reg_type == 1 || reg_type2 == 1) {
         navigation.navigate('Measurer');
-      } else if (reg_type == 2) {
+      } else if (reg_type == 2 || reg_type2 == 2) {
         navigation.navigate('Tailor');
-      } else if (reg_type == 3) {
+      } else if (reg_type == 3 || reg_type2 == 3) {
         navigation.navigate('Vendor');
       } else {
         null;
@@ -33,6 +37,9 @@ const Splash = ({navigation}) => {
         navigation.navigate('Onboard');
       }, 3000);
     }
+    // setTimeout(() => {
+    //   navigation.navigate('Onboard');
+    // }, 3000);
   }, [isLogged, navigation, userData]);
   return (
     <SafeAreaView style={styles.background}>

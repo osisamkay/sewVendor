@@ -9,6 +9,7 @@ import {
   SafeAreaView,
   FlatList,
   PermissionsAndroid,
+  ActivityIndicator,
 } from 'react-native';
 import {Button, Divider} from 'react-native-elements';
 import {
@@ -21,7 +22,6 @@ import GreyWallet from '../../../../assets/Group2633.svg';
 import Wallet from '../../../../assets/Group 2634.svg';
 import Add from '../../../../assets/Add Button.svg';
 import Archivment from './Archivment';
-import {Data} from './ArchivmentData';
 import StatsLabel from '../../../components/StatsLabel';
 import StarRating from 'react-native-star-rating';
 import FabricStyle from './FabricStyle';
@@ -29,15 +29,33 @@ import {FabricData} from './FabricData';
 import AddModal from './AddModal';
 import useHome from './hooks/useHome';
 import {useSelector, useDispatch} from 'react-redux';
+import useAnalytics from './hooks/useAnalytics';
+import usePurse from '../../generalHooks/usePurse';
+import Achievementts from '../../../../assets/archivement.svg';
+import Accepted from '../../../../assets/VendorRequest.svg';
+import Measurement from '../../../../assets/accepted.svg';
+import EditModal from './editModal';
+
 const VendorHomepage = ({route, navigation}) => {
   const [visible, setVisible] = useState(false);
   const [add, setAdd] = useState(false);
+  const [edit, setEdit] = useState(false);
   const [switchValue, setSwitchValue] = useState(false);
   const [inputs, setInputs] = useState({});
-  const [materials] = useHome();
+  const [materials, reload] = useHome();
   const {userData} = useSelector(state => state.LoginReducer);
   let {access_token} = userData;
   const options = {mediaType: 'photo'};
+  const [
+    loading,
+    purse,
+    withrawalRequest,
+    done,
+    setDone,
+    pendingR,
+    history,
+  ] = usePurse();
+  const [Achievements, completed, reviews, message] = useAnalytics();
 
   const data = [
     {
@@ -60,6 +78,20 @@ const VendorHomepage = ({route, navigation}) => {
     },
   ];
 
+  const Data = [
+    // {svg: <Accepted />, value: 150, text: 'Requests Accepted'},
+    {
+      svg: <Measurement />,
+      value: completed,
+      text: 'Materials sold',
+    },
+    {
+      svg: <Achievementts />,
+      value: Achievements,
+      text: 'Achievements Unlocked',
+    },
+  ];
+
   return (
     <SafeAreaView>
       <StatusBar
@@ -74,7 +106,7 @@ const VendorHomepage = ({route, navigation}) => {
         contentContainerStyle={styles.container}>
         <View style={styles.group}>
           <View style={styles.TopView}>
-            <View style={styles.status}>
+            {/* <View style={styles.status}>
               <Text style={styles.TopTxt}>
                 {switchValue ? (
                   <View style={styles.spot} />
@@ -99,16 +131,14 @@ const VendorHomepage = ({route, navigation}) => {
                   animationDuration={100}
                 />
               </View>
-            </View>
+            </View> */}
             <View style={styles.Wallet}>
-              {switchValue ? <Wallet /> : <GreyWallet />}
+              <Wallet />
             </View>
             <Text style={styles.bal}>Sew Balance</Text>
-            <Text style={switchValue ? styles.amt : styles.amtgrey}>
-              20,890
-              <Text style={switchValue ? styles.amts : styles.amtsgrey}>
-                NGN
-              </Text>
+            <Text style={styles.amt}>
+              {purse.length <= 0 ? '0' : purse.current_balance}
+              <Text style={styles.amts}>NGN</Text>
             </Text>
             <Text style={styles.dueDate}>Next withdrawal due 7th April 20</Text>
           </View>
@@ -134,6 +164,7 @@ const VendorHomepage = ({route, navigation}) => {
               </TouchableOpacity>
             </View>
             <View style={styles.fabrics}>
+              {materials.length <= 0 && <ActivityIndicator size={20} />}
               {materials.map(item => {
                 return (
                   <FabricStyle
@@ -144,7 +175,8 @@ const VendorHomepage = ({route, navigation}) => {
                     Price={item.Price}
                     image={item.img_url}
                     onSelect={() => {
-                      // handleSelected(item);
+                      setInputs(item);
+                      setEdit(true);
                     }}
                   />
                 );
@@ -213,7 +245,18 @@ const VendorHomepage = ({route, navigation}) => {
         modalVisible={add}
         closeModal={() => {
           setAdd(false);
+          reload();
         }}
+        reload={reload}
+      />
+      <EditModal
+        modalVisible={edit}
+        closeModal={() => {
+          setEdit(false);
+          reload();
+        }}
+        dataInput={inputs}
+        reload={reload}
       />
     </SafeAreaView>
   );
@@ -238,6 +281,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     padding: 11,
     alignSelf: 'center',
+    justifyContent: 'center',
   },
   spot: {
     height: 10,
@@ -300,12 +344,12 @@ const styles = StyleSheet.create({
   dueDate: {
     color: '#fff',
     fontSize: heightPercentageToDP('1.66%'),
-    paddingVertical: 10,
+    paddingTop: 10,
     textAlign: 'center',
   },
   top: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
     marginVertical: 17,
   },
   review: {

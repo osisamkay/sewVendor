@@ -17,8 +17,8 @@ const FabricStyle = ({
   image,
 }) => {
   return (
-    <TouchableOpacity>
-      <Card style={styles.container} onPress={onSelect}>
+    <TouchableOpacity onPress={onSelect}>
+      <Card style={styles.container}>
         <View style={styles.cardheader}>
           <Image
             source={{

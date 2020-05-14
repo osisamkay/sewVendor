@@ -22,6 +22,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
 import CompletedModal from './CompletedModal';
 import {CompleteData} from './CompleteData';
+import useSold from './hooks/useSold';
 
 if (
   Platform.OS === 'android' &&
@@ -51,7 +52,7 @@ const CompleteVendor = ({route, navigation}) => {
   const [reportModal, setReportModal] = useState(false);
   const [display, setDisplay] = useState(false);
   const [user, SetUser] = useState('');
-
+  const [sold] = useSold();
   const updateSearch = search => {
     let value = search;
     setSearch(value);

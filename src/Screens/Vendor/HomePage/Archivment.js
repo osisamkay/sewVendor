@@ -37,7 +37,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   value: {
-    fontSize: heightPercentageToDP('5.5%'),
+    fontSize: heightPercentageToDP('3.5%'),
     color: '#fff',
   },
   text: {

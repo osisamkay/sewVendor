@@ -36,10 +36,11 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
   const [bankDets, setBankDets] = useState('');
   const [bankData, setBankdata] = useState({});
   const [vendor_bank_id, setvendor_bank_id] = useState('');
-  const [loading, Bank, AddBank, currentBank, setDefault] = useBank();
-
+  const [loading, Bank, AddBank, currentBank, setDefault, reload] = useBank();
   const Dets = {bank_id: bankk, account_number: bankDets};
+
   const Dets2 = {vendor_bank_id};
+
   const handleSubmit = Det => {
     AddBank(Det);
   };
@@ -256,7 +257,7 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
               buttonStyle={styles.saveBtn}
               loading={loading}
               onPress={() => {
-                setDefault();
+                // setDefault();
               }}
             />
           </View>

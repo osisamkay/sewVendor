@@ -54,7 +54,14 @@ const TailorHomepage = ({route, navigation}) => {
     {svg: <Achievements />, value: 103, text: 'Achievements Unlocked'},
   ];
 
-  const [purse] = usePurse();
+  const [
+    purse,
+    withrawalRequest,
+    done,
+    setDone,
+    pendingR,
+    history,
+  ] = usePurse();
   const options = {};
 
   const requestCameraPermission = async () => {

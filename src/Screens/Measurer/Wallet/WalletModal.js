@@ -25,6 +25,7 @@ const WalletModal = ({
   Data,
   Proceed,
   Report,
+  amount,
 }) => {
   return (
     <Modal
@@ -36,7 +37,7 @@ const WalletModal = ({
         <View style={styles.group}>
           <View style={styles.SummaryTop}>
             <Text style={styles.SummaryTopText}>
-              Break 15,000NGN From Your Sew Wallet?
+              Deduct {amount}NGN From Your Sew Wallet?
             </Text>
           </View>
           <Text style={styles.SummaryTopText}>

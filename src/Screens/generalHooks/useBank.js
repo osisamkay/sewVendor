@@ -105,8 +105,40 @@ export default () => {
     }
   };
 
+  /**to  reloadbanks after adding */
+  const reload = () => {
+    const requestMyBanks = new Promise(res => {
+      res(
+        Instance.get('vendors/banks?provider=vendor', {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        }),
+      );
+    });
+    requestMyBanks.then(({data: data}) => {
+      let s = data.status;
+      let m = data.message;
+      if (s) {
+        setCurrentBank(data.data);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        // setReqMessage(m);
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'danger',
+          duration: 5000,
+          style: Style,
+        });
+      }
+    });
+  };
+
   useEffect(() => {
-    /**gets user profile */
+    /**get sall banks */
     const request = new Promise(res => {
       res(
         Instance.get('banks?provider=vendor', {
@@ -120,7 +152,7 @@ export default () => {
       let p = data.data;
       setBank(data.data);
     });
-    //**gets on-going projects */
+    //**gets user added banks */
     const requestMyBanks = new Promise(res => {
       res(
         Instance.get('vendors/banks?provider=vendor', {
@@ -131,9 +163,25 @@ export default () => {
       );
     });
     requestMyBanks.then(({data: data}) => {
-      setCurrentBank(data.data);
+      let s = data.status;
+      let m = data.message;
+      if (s) {
+        setCurrentBank(data.data);
+        setLoading(false);
+      } else {
+        setLoading(false);
+        // setReqMessage(m);
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'danger',
+          duration: 5000,
+          style: Style,
+        });
+      }
     });
-  }, [access_token]);
+  }, [Style, access_token]);
 
-  return [loading, Bank, AddBank, currentBank, setDefault];
+  return [loading, Bank, AddBank, currentBank, setDefault, reload];
 };
