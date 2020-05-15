@@ -6,6 +6,7 @@
     "android": "react-native run-android",
     "ios": "react-native run-ios",
     "start": "react-native start",
+    "clean": "react-native-clean-project",
     "test": "jest",
     "lint": "eslint ."
   },
@@ -25,6 +26,7 @@
     "react-native": "^0.61.5",
     "react-native-calendar-picker": "^6.0.6",
     "react-native-carousel-view": "^0.5.1",
+    "react-native-clean-project": "^3.3.0",
     "react-native-elements": "^1.2.7",
     "react-native-gesture-handler": "^1.6.1",
     "react-native-image-picker": "^2.3.1",

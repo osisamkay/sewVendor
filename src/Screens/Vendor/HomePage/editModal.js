@@ -520,4 +520,7 @@ const styles = StyleSheet.create({
   addImgTxt: {
     color: 'black',
   },
+  spinnerTextStyle: {
+    color: '#FFF',
+  },
 });

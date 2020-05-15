@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import {useNavigation} from '@react-navigation/native';
+// import {NavigationEvents} from 'react-navigation';
 import {
   View,
   Text,
@@ -22,6 +23,7 @@ import PendingModal from './PendingModal';
 import PendingModalConfirmation from './PendingModalConfirmation';
 import CarouselModal from './CarouselModal';
 import useRequest from './useRequest';
+import {run} from 'jest';
 
 const Data = [
   {
@@ -61,6 +63,7 @@ const TailorPending = ({Measurements}) => {
     reqMessages,
     setReqMessage,
     CompleteRequest,
+    run,
   ] = useRequest();
   const navigation = useNavigation();
 
@@ -69,6 +72,12 @@ const TailorPending = ({Measurements}) => {
   };
   return (
     <SafeAreaView>
+      {/* <NavigationEvents
+        // onWillFocus={payload => console.log('will focus', payload)}
+        onDidFocus={() => {
+          run();
+        }}
+      /> */}
       <StatusBar
         backgroundColor="#fff"
         barStyle="dark-content"

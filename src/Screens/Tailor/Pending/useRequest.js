@@ -90,7 +90,7 @@ export default () => {
     }
   };
 
-  useEffect(() => {
+  const run = () => {
     /**get all pending requests */
     const request = new Promise(res => {
       res(
@@ -103,24 +103,25 @@ export default () => {
     });
     request
       .then(({data: data}) => {
+        console.log(data);
         let s = data.status;
         let m = data.message;
         if (s) {
           setResults(data.data);
         } else {
           setLoading(false);
-          //   Toast.show({
-          //     // text: m,
-          //     // buttonText: 'Okay',
-          //     // position: 'top',
-          //     // type: 'danger',
-          //     // duration: 5000,
-          //     // style: Style,
-          //   });
+          Toast.show({
+            text: m,
+            buttonText: 'Okay',
+            position: 'top',
+            type: 'danger',
+            duration: 5000,
+            style: Style,
+          });
         }
       })
       .catch(err => {
-        alert(err);
+        // console.log(err);
       });
     /**get all ongoing requests */
     const requestOngoing = new Promise(res => {
@@ -154,7 +155,75 @@ export default () => {
         }
       })
       .catch(err => {
-        alert(err);
+        // console.log(object);
+      });
+  };
+
+  useEffect(() => {
+    // /**get all pending requests */
+    const request = new Promise(res => {
+      res(
+        Instance.get('vendors/tailor/jobs/pending?provider=vendor', {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        }),
+      );
+    });
+    request
+      .then(({data: data}) => {
+        console.log(data);
+        let s = data.status;
+        let m = data.message;
+        if (s) {
+          setResults(data.data);
+        } else {
+          setLoading(false);
+          Toast.show({
+            text: m,
+            buttonText: 'Okay',
+            position: 'top',
+            type: 'danger',
+            duration: 5000,
+            style: Style,
+          });
+        }
+      })
+      .catch(err => {
+        // console.log(err);
+      });
+    /**get all ongoing requests */
+    const requestOngoing = new Promise(res => {
+      res(
+        Instance.get('vendors/tailor/jobs/ongoing?provider=vendor', {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        }),
+      );
+    });
+    requestOngoing
+      .then(({data: data}) => {
+        let s = data.status;
+        let m = data.message;
+        if (s) {
+          setResultsOngoing(data.data);
+          setStatus1(s);
+        } else {
+          setStatus1(s);
+          setMessage(m);
+          //   Toast.show({
+          //     text: m,
+          //     buttonText: 'Okay',
+          //     position: 'top',
+          //     type: 'danger',
+          //     duration: 5000,
+          //     style: Style,
+          //   });
+        }
+      })
+      .catch(err => {
+        // console.log(object);
       });
   }, [Style, access_token, tailor_category_id]);
 
@@ -168,5 +237,6 @@ export default () => {
     reqMessages,
     setReqMessage,
     CompleteRequest,
+    run,
   ];
 };

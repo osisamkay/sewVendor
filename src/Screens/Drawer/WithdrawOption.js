@@ -24,11 +24,16 @@ import {Picker} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button, Textarea, Card} from 'native-base';
 import useWithdrawals from '../generalHooks/useWithdrawals';
-import useBank from '../generalHooks/useBank';
 
 const WithdrawOption = ({navigation, closeModal, images, Add, image}) => {
   const [frequency, setFrequency] = useState('Frequency');
-  const [loading, options, currentBank, withrawalOption] = useWithdrawals();
+  const [
+    loading,
+    options,
+    currentBank,
+    withrawalOption,
+    reload,
+  ] = useWithdrawals();
 
   return (
     <SafeAreaView style={{flex: 1}}>

@@ -27,16 +27,27 @@ import {Textarea, Card} from 'native-base';
 import useBank from '../generalHooks/useBank';
 import {set} from 'react-native-reanimated';
 import {BankData} from './data';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const BankSettings = ({navigation, closeModal, images, Add, image}) => {
   const [frequency, setFrequency] = useState('Frequency');
   const [modalVisible, setModalVisible] = useState(false);
+  const [bvnModalVisible, setBvnModalVisible] = useState(false);
   const [modalVisible2, setModalVisible2] = useState(false);
   const [bankk, setBankk] = useState('');
+  const [bvn, setBvn] = useState('');
   const [bankDets, setBankDets] = useState('');
   const [bankData, setBankdata] = useState({});
   const [vendor_bank_id, setvendor_bank_id] = useState('');
-  const [loading, Bank, AddBank, currentBank, setDefault, reload] = useBank();
+  const [
+    loading,
+    Bank,
+    AddBank,
+    currentBank,
+    setDefault,
+    reload,
+    updateBvn,
+  ] = useBank();
   const Dets = {bank_id: bankk, account_number: bankDets};
 
   const Dets2 = {vendor_bank_id};
@@ -46,6 +57,9 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
   };
   const handleDefalt = Det2 => {
     setDefault(Det2);
+  };
+  const BvnUpdate = b => {
+    updateBvn(b);
   };
 
   return (
@@ -115,24 +129,58 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
               title="Add Bank"
               titleStyle={styles.saveBtnTxt}
               buttonStyle={styles.saveBtn}
-              loading={loading}
               onPress={() => {
                 setModalVisible(true);
               }}
             />
             <Button
-              title="Update"
+              title="Update BVN"
               titleStyle={styles.saveBtnTxt}
               buttonStyle={styles.saveBtn}
-              loading={loading}
               onPress={() => {
-                setModalVisible(true);
+                setBvnModalVisible(true);
               }}
             />
           </View>
         </View>
       </ScrollView>
 
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={bvnModalVisible}
+        onRequestClose={closeModal}>
+        <View style={styles.addContainer}>
+          <View style={styles.addContainerGroup}>
+            <Card style={styles.tests}>
+              <TextInput
+                placeholder="Enter Bank Verification Number"
+                onChangeText={value => {
+                  setBvn(value);
+                }}
+              />
+            </Card>
+          </View>
+          <View style={styles.saveBtnGrp2}>
+            <Button
+              title="Update"
+              titleStyle={styles.saveBtnTxt}
+              buttonStyle={styles.saveBtn}
+              onPress={() => {
+                BvnUpdate(bvn);
+              }}
+            />
+            <Button
+              title="Cancel"
+              titleStyle={styles.saveBtnTxt}
+              buttonStyle={styles.saveBtn}
+              onPress={() => {
+                setBvnModalVisible(false);
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
       <Modal
         animationType="fade"
         transparent={true}
@@ -170,7 +218,6 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
               title="Add"
               titleStyle={styles.saveBtnTxt}
               buttonStyle={styles.saveBtn}
-              loading={loading}
               onPress={() => {
                 handleSubmit(Dets);
               }}
@@ -215,20 +262,11 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
         <View style={styles.addContainer2}>
           <View style={styles.addContainerGroup}>
             <Card style={styles.tests}>
-              <Picker
-                mode="dropdown"
-                // iosIcon={<Icon name="arrow-down" />}
-                placeholder="Select Bank"
-                placeholderStyle={{color: '#707070'}}
-                style={{width: undefined}}
-                selectedValue={bankk}
-                onValueChange={value => {
-                  setBankk(value);
-                }}>
-                {Bank.map(data => {
-                  return <Picker.Item label={data.name} value={data.id} />;
-                })}
-              </Picker>
+              <TextInput
+                placeholder="Account Number"
+                value={bankData.name}
+                disabled
+              />
             </Card>
             <Card style={styles.tests}>
               <TextInput
@@ -245,7 +283,6 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
               title="Set As Default"
               titleStyle={styles.saveBtnTxt}
               buttonStyle={styles.saveBtn}
-              loading={loading}
               onPress={() => {
                 handleDefalt(Dets2);
                 setModalVisible2(false);
@@ -255,7 +292,6 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
               title="Delete"
               titleStyle={styles.saveBtnTxt}
               buttonStyle={styles.saveBtn}
-              loading={loading}
               onPress={() => {
                 // setDefault();
               }}
@@ -263,6 +299,11 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
           </View>
         </View>
       </Modal>
+      <Spinner
+        visible={loading}
+        textContent={'Please Wait...'}
+        textStyle={styles.spinnerTextStyle}
+      />
     </SafeAreaView>
   );
 };
@@ -471,5 +512,8 @@ const styles = StyleSheet.create({
   addContainerGroup: {
     height: heightPercentageToDP('25%'),
     justifyContent: 'space-evenly',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

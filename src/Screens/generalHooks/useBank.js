@@ -20,6 +20,50 @@ export default () => {
   };
 
   //** sort fabrics */
+  const updateBvn = async bvn => {
+    setLoading(true);
+    let data = {bvn: bvn};
+    try {
+      const response = await Instance.put(
+        'vendors/banks/bvn/update?provider=vendor',
+        data,
+        {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        },
+      );
+
+      let s = response.data.status;
+      let m = response.data.message;
+      if (s) {
+        // setResults(response.data.data);
+        setLoading(false);
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'success',
+          duration: 5000,
+          style: Style,
+        });
+      } else {
+        setLoading(false);
+        // setReqMessage(m);
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'bottom',
+          type: 'danger',
+          duration: 5000,
+          style: Style,
+        });
+      }
+    } catch (err) {
+      //   setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
+  };
   const AddBank = async bankData => {
     setLoading(true);
     try {
@@ -82,7 +126,7 @@ export default () => {
         Toast.show({
           text: m,
           buttonText: 'Okay',
-          position: 'top',
+          position: 'bottom',
           type: 'success',
           duration: 5000,
           style: Style,
@@ -144,20 +188,26 @@ export default () => {
         Instance.get('banks?provider=vendor', {
           headers: {
             Authorization: 'Bearer ' + access_token,
+            // 'Retry-After': 360000,
           },
         }),
       );
     });
-    request.then(({data: data}) => {
-      let p = data.data;
-      setBank(data.data);
-    });
+    request
+      .then(({data: data}) => {
+        let p = data.data;
+        setBank(data.data);
+      })
+      .catch(err => {
+        console.log('first', err);
+      });
     //**gets user added banks */
     const requestMyBanks = new Promise(res => {
       res(
         Instance.get('vendors/banks?provider=vendor', {
           headers: {
             Authorization: 'Bearer ' + access_token,
+            // 'Retry-After': ,
           },
         }),
       );
@@ -183,5 +233,5 @@ export default () => {
     });
   }, [Style, access_token]);
 
-  return [loading, Bank, AddBank, currentBank, setDefault, reload];
+  return [loading, Bank, AddBank, currentBank, setDefault, reload, updateBvn];
 };
