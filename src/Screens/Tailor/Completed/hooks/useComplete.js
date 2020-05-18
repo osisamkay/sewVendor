@@ -24,82 +24,8 @@ export default () => {
     alignSelf: 'center',
     borderRadius: 6,
   };
-  //   const handleSort = async sortBy => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await Instance.get(
-  //         `user/styles/${sortBy}?provider=user`,
-  //         {
-  //           headers: {
-  //             Authorization: 'Bearer ' + access_token,
-  //           },
-  //         },
-  //       );
-  //       let s = response.data.status;
-  //       let m = response.data.message;
-  //       if (s) {
-  //         setResults(response.data.data);
-  //         setLoading(false);
-  //       } else {
-  //         setLoading(false);
-  //       }
-  //     } catch (err) {
-  //       setErrorMessage('Something went wrong');
-  //     }
-  //   };
 
-  //   //** sort fabrics */
-  //   const handleFabricSort = async sortBy => {
-  //     setLoading(true);
-  //     try {
-  //       const response = await Instance.get(
-  //         `user/materials/${sortBy}?provider=user`,
-  //         {
-  //           headers: {
-  //             Authorization: 'Bearer ' + access_token,
-  //           },
-  //         },
-  //       );
-  //       let s = response.data.status;
-  //       let m = response.data.message;
-  //       if (s) {
-  //         setResults(response.data.data);
-  //         setLoading(false);
-  //       } else {
-  //         setLoading(false);
-  //       }
-  //     } catch (err) {
-  //       setErrorMessage('Something went wrong');
-  //     }
-  //   };
-  //   const handleSearch = async style_name => {
-  //     setLoading;
-  //     try {
-  //       const response = await Instance.get(
-  //         `user/styles/${style_name}/search?provider=user`,
-  //         {
-  //           headers: {
-  //             Authorization: 'Bearer ' + access_token,
-  //           },
-  //         },
-  //       );
-
-  //       let s = response.data.status;
-  //       let m = response.data.message;
-  //       if (s) {
-  //         setResults(response.data.data);
-  //         setLoading(false);
-  //       } else {
-  //         setLoading(false);
-  //       }
-  //     } catch (err) {
-  //       setErrorMessage('Something went wrong');
-  //     }
-  //   };
-
-  useEffect(() => {
-    console.log(access_token);
-    /**get all pending requests */
+  const run = () => {
     const request = new Promise(res => {
       res(
         Instance.get('vendors/tailor/jobs/completed?provider=vendor', {
@@ -130,9 +56,9 @@ export default () => {
         }
       })
       .catch(err => {
-        alert(err);
+        // alert(err);/
       });
-  }, [Style, access_token, tailor_category_id]);
+  };
 
-  return [loading, results];
+  return [loading, results, run];
 };

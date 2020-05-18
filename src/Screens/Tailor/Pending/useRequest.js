@@ -71,6 +71,52 @@ export default () => {
       let s = response.data.status;
       let m = response.data.message;
       if (s) {
+        setLoading(false);
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'success',
+          duration: 5000,
+          style: Style,
+        });
+        run();
+      } else {
+        setLoading(false);
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'danger',
+          duration: 5000,
+          style: Style,
+        });
+        run();
+      }
+    } catch (err) {
+      //   setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
+  };
+
+  // gets Job info
+  const jobInfo = async job_id => {
+    setLoading(true);
+    const dataId = {job_id};
+    try {
+      const response = await Instance.get(
+        'vendors/tailor/jobs/:job_id/details?provider=vendor',
+        dataId,
+        {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        },
+      );
+      console.log(response);
+      let s = response.data.status;
+      let m = response.data.message;
+      if (s) {
         setResults(response.data.data);
         setLoading(false);
       } else {
@@ -90,142 +136,135 @@ export default () => {
     }
   };
 
-  const run = () => {
+  const run = async () => {
+    setLoading(true);
     /**get all pending requests */
-    const request = new Promise(res => {
-      res(
-        Instance.get('vendors/tailor/jobs/pending?provider=vendor', {
+    try {
+      const response = await Instance.get(
+        `vendors/tailor/jobs/pending?provider=vendor`,
+        {
           headers: {
             Authorization: 'Bearer ' + access_token,
           },
-        }),
+        },
       );
-    });
-    request
-      .then(({data: data}) => {
-        console.log(data);
-        let s = data.status;
-        let m = data.message;
-        if (s) {
-          setResults(data.data);
-        } else {
-          setLoading(false);
-          Toast.show({
-            text: m,
-            buttonText: 'Okay',
-            position: 'top',
-            type: 'danger',
-            duration: 5000,
-            style: Style,
-          });
-        }
-      })
-      .catch(err => {
-        // console.log(err);
-      });
-    /**get all ongoing requests */
-    const requestOngoing = new Promise(res => {
-      res(
-        Instance.get('vendors/tailor/jobs/ongoing?provider=vendor', {
-          headers: {
-            Authorization: 'Bearer ' + access_token,
-          },
-        }),
-      );
-    });
-    requestOngoing
-      .then(({data: data}) => {
-        let s = data.status;
-        let m = data.message;
-        if (s) {
-          setResultsOngoing(data.data);
-          setStatus1(s);
-        } else {
-          setStatus1(s);
-          setMessage(m);
+      let s = response.data.status;
+      let m = response.data.message;
+      if (s) {
+        setLoading(false);
+        let d = response.data.data;
+        setResults(d);
+      } else {
+        setLoading(false);
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'danger',
+          duration: 5000,
+          style: Style,
+        });
+      }
+    } catch (err) {
+      //   setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
 
-          //   Toast.show({
-          //     text: m,
-          //     buttonText: 'Okay',
-          //     position: 'top',
-          //     type: 'danger',
-          //     duration: 5000,
-          //     style: Style,
-          //   });
-        }
-      })
-      .catch(err => {
-        // console.log(object);
-      });
+    try {
+      const response = await Instance.get(
+        `vendors/tailor/jobs/ongoing?provider=vendor`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        },
+      );
+      let s = response.data.status;
+      let m = response.data.message;
+      if (s) {
+        setResultsOngoing(response.data.data);
+        setStatus1(s);
+      } else {
+        setStatus1(s);
+        setMessage(m);
+      }
+    } catch (err) {
+      //   setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
+
+    /**get all ongoing requests */
+    // const requestOngoing = new Promise(res => {
+    //   res(
+    //     Instance.get('vendors/tailor/jobs/ongoing?provider=vendor', {
+    //       headers: {
+    //         Authorization: 'Bearer ' + access_token,
+    //       },
+    //     }),
+    //   );
+    // });
+    // requestOngoing
+    //   .then(({data: data}) => {
+    //     let s = data.status;
+    //     let m = data.message;
+    //     if (s) {
+    //       setResultsOngoing(data.data);
+    //       setStatus1(s);
+    //     } else {
+    //       setStatus1(s);
+    //       setMessage(m);
+    //     }
+    //   })
+    //   .catch(err => {
+    //     // console.log(object);
+    //   });
   };
 
-  useEffect(() => {
-    // /**get all pending requests */
-    const request = new Promise(res => {
-      res(
-        Instance.get('vendors/tailor/jobs/pending?provider=vendor', {
+  /**to accept requests */
+  const AcceptRequest = async job_id => {
+    setLoading(true);
+    const dataId = {job_id};
+    try {
+      const response = await Instance.put(
+        'vendors/tailor/jobs/accept?provider=vendor',
+        dataId,
+        {
           headers: {
             Authorization: 'Bearer ' + access_token,
           },
-        }),
+        },
       );
-    });
-    request
-      .then(({data: data}) => {
-        console.log(data);
-        let s = data.status;
-        let m = data.message;
-        if (s) {
-          setResults(data.data);
-        } else {
-          setLoading(false);
-          Toast.show({
-            text: m,
-            buttonText: 'Okay',
-            position: 'top',
-            type: 'danger',
-            duration: 5000,
-            style: Style,
-          });
-        }
-      })
-      .catch(err => {
-        // console.log(err);
-      });
-    /**get all ongoing requests */
-    const requestOngoing = new Promise(res => {
-      res(
-        Instance.get('vendors/tailor/jobs/ongoing?provider=vendor', {
-          headers: {
-            Authorization: 'Bearer ' + access_token,
-          },
-        }),
-      );
-    });
-    requestOngoing
-      .then(({data: data}) => {
-        let s = data.status;
-        let m = data.message;
-        if (s) {
-          setResultsOngoing(data.data);
-          setStatus1(s);
-        } else {
-          setStatus1(s);
-          setMessage(m);
-          //   Toast.show({
-          //     text: m,
-          //     buttonText: 'Okay',
-          //     position: 'top',
-          //     type: 'danger',
-          //     duration: 5000,
-          //     style: Style,
-          //   });
-        }
-      })
-      .catch(err => {
-        // console.log(object);
-      });
-  }, [Style, access_token, tailor_category_id]);
+      console.log(response);
+      let s = response.data.status;
+      let m = response.data.message;
+      if (s) {
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'success',
+          duration: 5000,
+          style: Style,
+        });
+        run();
+        setLoading(false);
+      } else {
+        setLoading(false);
+        Toast.show({
+          text: m,
+          buttonText: 'Okay',
+          position: 'top',
+          type: 'danger',
+          duration: 5000,
+          style: Style,
+        });
+        run();
+      }
+    } catch (err) {
+      //   setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
+  };
 
   return [
     loading,
@@ -238,5 +277,7 @@ export default () => {
     setReqMessage,
     CompleteRequest,
     run,
+    AcceptRequest,
+    jobInfo,
   ];
 };

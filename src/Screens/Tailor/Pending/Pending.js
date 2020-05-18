@@ -23,28 +23,7 @@ import PendingModal from './PendingModal';
 import PendingModalConfirmation from './PendingModalConfirmation';
 import CarouselModal from './CarouselModal';
 import useRequest from './useRequest';
-import {run} from 'jest';
-
-const Data = [
-  {
-    id: 1,
-    user: ' Retailer001',
-    distance: '3 miles away',
-    material: 'Ankara',
-    Transit: false,
-    size: '6 Yards',
-  },
-];
-const Data2 = [
-  {
-    id: 2,
-    user: ' Retailer002',
-    distance: '3 miles away',
-    material: 'Lace',
-    Transit: true,
-    size: '6 Yards',
-  },
-];
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const TailorPending = ({Measurements}) => {
   const [btn, setBtn] = useState('Arrived');
@@ -64,25 +43,31 @@ const TailorPending = ({Measurements}) => {
     setReqMessage,
     CompleteRequest,
     run,
+    AcceptRequest,
+    jobInfo,
   ] = useRequest();
+
   const navigation = useNavigation();
+
+  navigation.addListener('focus', () => {
+    run();
+  });
 
   const onStarRatingPress = rating => {
     setStarCount(rating);
   };
   return (
     <SafeAreaView>
-      {/* <NavigationEvents
-        // onWillFocus={payload => console.log('will focus', payload)}
-        onDidFocus={() => {
-          run();
-        }}
-      /> */}
       <StatusBar
         backgroundColor="#fff"
         barStyle="dark-content"
         showHideTransition
         hidden={false}
+      />
+      <Spinner
+        visible={false}
+        textContent={'Loading...'}
+        textStyle={styles.spinnerTextStyle}
       />
       <View style={styles.segmentContainer}>
         <TouchableOpacity
@@ -118,7 +103,7 @@ const TailorPending = ({Measurements}) => {
             </Text>
           ) : null}
           {segment &&
-            Data.map(data => {
+            resultsOngoing.map(data => {
               return (
                 <View key={data.id} style={styles.TopView}>
                   <View
@@ -147,14 +132,14 @@ const TailorPending = ({Measurements}) => {
                               color: '#fff',
                               fontSize: heightPercentageToDP('2.567%'),
                             }}>
-                            Material Name
+                            {data.fabric.title}
                           </Text>
                           <Text
                             style={{
                               color: '#5CE3D9',
                               fontSize: heightPercentageToDP('2.031%'),
                             }}>
-                            Senetor with Cap
+                            {data.order_name}
                           </Text>
                         </View>
                       </View>
@@ -164,14 +149,14 @@ const TailorPending = ({Measurements}) => {
                             color: '#5CE3D9',
                             fontSize: heightPercentageToDP('2.031%'),
                           }}>
-                          Due In 7 Days
+                          Due In {data.no_of_days_left} Days
                         </Text>
                         <Text
                           style={{
                             color: '#fff',
                             fontSize: heightPercentageToDP('2.655%'),
                           }}>
-                          15,000NGN
+                          {data.total_amount}NGN
                         </Text>
                       </View>
                     </View>
@@ -201,13 +186,17 @@ const TailorPending = ({Measurements}) => {
                         style={styles.img}
                       />
                       <View>
-                        <Text style={styles.usertxt}>{data.user}</Text>
-                        <Text style={styles.userMaterial}>{data.material}</Text>
+                        <Text style={styles.usertxt}>
+                          {data.user.first_name + ' ' + data.user.last_name}
+                        </Text>
+                        <Text style={styles.userMaterial}>
+                          {data.fabric.title}
+                        </Text>
                       </View>
                     </View>
                     <View>
                       <Text style={styles.distance}>{data.distance}</Text>
-                      <Text style={styles.distance}>{data.size}</Text>
+                      <Text style={styles.distance}>6 yards</Text>
                     </View>
                   </View>
                   <View style={styles.actionGroup}>
@@ -253,7 +242,7 @@ const TailorPending = ({Measurements}) => {
               );
             })}
           {!segment &&
-            Data2.map(data => {
+            results.map(data => {
               return (
                 <View key={data.id} style={styles.TopView}>
                   <View
@@ -282,14 +271,14 @@ const TailorPending = ({Measurements}) => {
                               color: '#fff',
                               fontSize: heightPercentageToDP('2.567%'),
                             }}>
-                            Material Name
+                            {data.fabric.title}
                           </Text>
                           <Text
                             style={{
                               color: '#5CE3D9',
                               fontSize: heightPercentageToDP('2.031%'),
                             }}>
-                            Senetor with Cap
+                            {data.order_name}
                           </Text>
                         </View>
                       </View>
@@ -299,14 +288,14 @@ const TailorPending = ({Measurements}) => {
                             color: '#5CE3D9',
                             fontSize: heightPercentageToDP('2.031%'),
                           }}>
-                          Due In 7 Days
+                          Due In {data.no_of_days_left} Days
                         </Text>
                         <Text
                           style={{
                             color: '#fff',
                             fontSize: heightPercentageToDP('2.655%'),
                           }}>
-                          15,000NGN
+                          {data.total_amount}NGN
                         </Text>
                       </View>
                     </View>
@@ -336,13 +325,17 @@ const TailorPending = ({Measurements}) => {
                         style={styles.img}
                       />
                       <View>
-                        <Text style={styles.usertxt}>{data.user}</Text>
-                        <Text style={styles.userMaterial}>{data.material}</Text>
+                        <Text style={styles.usertxt}>
+                          {data.user.first_name + ' ' + data.user.last_name}
+                        </Text>
+                        <Text style={styles.userMaterial}>
+                          {data.fabric.title}
+                        </Text>
                       </View>
                     </View>
                     <View>
                       <Text style={styles.distance}>{data.distance}</Text>
-                      <Text style={styles.distance}>{data.size}</Text>
+                      <Text style={styles.distance}>{data.size}6 yards</Text>
                     </View>
                   </View>
                   <View style={styles.actionGroup}>
@@ -364,12 +357,13 @@ const TailorPending = ({Measurements}) => {
                     }}>
                     <Button
                       id={data.id}
-                      title={data.Transit ? 'Awaiting Material' : 'Sewing'}
+                      title="Accept"
                       buttonStyle={styles.btn}
-                      disabled={data.Transit ? false : true}
+                      disabled={data.completed_at === null ? false : true}
                       disabledStyle={styles.btnT}
                       onPress={title => {
-                        setDispatch(true);
+                        // setDispatch(true);
+                        AcceptRequest(data.id);
                       }}
                       titleStyle={{color: '#000'}}
                     />
@@ -517,5 +511,8 @@ const styles = StyleSheet.create({
   segmentOff: {
     fontSize: heightPercentageToDP('2.5%'),
     color: 'rgba(61,119,130,.4)',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

@@ -1,4 +1,5 @@
 import React, {useState} from 'react';
+import {useNavigation} from '@react-navigation/native';
 import {
   View,
   Text,
@@ -44,13 +45,19 @@ const Data = [
   },
 ];
 
-const CompleteTailor = ({route, navigation}) => {
+const CompleteTailor = ({route}) => {
   const [search, setSearch] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState('Date');
   const [carouselModal, setCarouselModal] = useState(false);
   const [display, setDisplay] = useState(false);
   const [user, SetUser] = useState('');
-  const [loading, results] = useComplete();
+  const [loading, results, run] = useComplete();
+
+  const navigation = useNavigation();
+
+  navigation.addListener('focus', () => {
+    run();
+  });
 
   const updateSearch = search => {
     let value = search;
@@ -106,13 +113,13 @@ const CompleteTailor = ({route, navigation}) => {
             </View>
           </View>
         </View>
-        {Data.map(data => {
+        {results.map(data => {
           return (
             <TouchableOpacity
               key={data.id}
               style={styles.TopView}
               onPress={() => {
-                handleCompletedRequest(data.user);
+                handleCompletedRequest(data);
               }}>
               <View style={styles.reqTop}>
                 <View style={styles.user}>
@@ -120,9 +127,11 @@ const CompleteTailor = ({route, navigation}) => {
                     source={require('../../../../assets/Profile.png')}
                     style={styles.img}
                   />
-                  <Text style={styles.usertxt}>{data.user}</Text>
+                  <Text style={styles.usertxt}>{data.order_name}</Text>
                 </View>
-                <Text style={styles.distance}>{data.distance}</Text>
+                <Text style={styles.distance}>
+                  {moment(data.completed_at).format('YYYY-MM-DD')}
+                </Text>
               </View>
             </TouchableOpacity>
           );
