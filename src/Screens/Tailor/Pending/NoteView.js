@@ -15,6 +15,7 @@ import {
   heightPercentageToDP,
 } from 'react-native-responsive-screen';
 import Camera from '../../../../assets/camera.svg';
+import moment from 'moment';
 
 const NoteView = ({
   modalVisible,
@@ -49,14 +50,14 @@ const NoteView = ({
                   color: '#000',
                   fontSize: heightPercentageToDP('1.875%'),
                 }}>
-                User 098
+                {Data.user.first_name + ' ' + Data.user.last_name}
               </Text>
               <Text
                 style={{
                   color: '#000',
                   fontSize: heightPercentageToDP('1.5%'),
                 }}>
-                Senetor with Cap
+                {Data.order_name}
               </Text>
             </View>
           </View>
@@ -66,7 +67,7 @@ const NoteView = ({
                 color: '#000',
                 fontSize: heightPercentageToDP('1.25%'),
               }}>
-              Due In 7 Days
+              Due by {moment(Data.dead_line_date).format('YYYY-MM-DD')}
             </Text>
             <Text
               style={{

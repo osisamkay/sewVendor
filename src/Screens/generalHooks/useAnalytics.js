@@ -21,7 +21,7 @@ export default () => {
     borderRadius: 6,
   };
 
-  useEffect(() => {
+  const RunAnalytics = () => {
     /**gets user profile */
     const request = new Promise(res => {
       res(
@@ -74,7 +74,9 @@ export default () => {
         setMessage(m);
       }
     });
-  }, [access_token]);
+  };
 
-  return [accepted, completed, reviews, message];
+  useEffect(() => {}, [access_token]);
+
+  return [accepted, completed, reviews, message, RunAnalytics];
 };

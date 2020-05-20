@@ -35,8 +35,9 @@ import Achievementts from '../../../../assets/archivement.svg';
 import Accepted from '../../../../assets/VendorRequest.svg';
 import Measurement from '../../../../assets/accepted.svg';
 import EditModal from './editModal';
+import {useNavigation} from '@react-navigation/native';
 
-const VendorHomepage = ({route, navigation}) => {
+const VendorHomepage = ({route}) => {
   const [visible, setVisible] = useState(false);
   const [add, setAdd] = useState(false);
   const [edit, setEdit] = useState(false);
@@ -47,7 +48,8 @@ const VendorHomepage = ({route, navigation}) => {
   let {access_token} = userData;
   const options = {mediaType: 'photo'};
   const [
-    loading,
+    loadingP,
+    Run,
     purse,
     withrawalRequest,
     done,
@@ -56,6 +58,12 @@ const VendorHomepage = ({route, navigation}) => {
     history,
   ] = usePurse();
   const [Achievements, completed, reviews, message] = useAnalytics();
+
+  const navigation = useNavigation();
+  navigation.addListener('focus', e => {
+    // Prevent default action
+    Run();
+  });
 
   const data = [
     {

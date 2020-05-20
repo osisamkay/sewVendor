@@ -17,6 +17,7 @@ import {Button, Textarea, Card, CardItem} from 'native-base';
 import WalletModal from './WalletModal';
 import Ok from '../../../../assets/ok.svg';
 import usePurse from '../../generalHooks/usePurse';
+import {useNavigation} from '@react-navigation/native';
 
 const data = [
   {name: 'Sew Points', time: '34 mins ago', amount: 'N 3100'},
@@ -25,14 +26,15 @@ const data = [
   {name: 'UserO97', time: '34 mins ago', amount: 'N 3100'},
 ];
 
-const Wallet = ({navigation}) => {
+const Wallet = () => {
   const [modalView, setModalView] = useState(false);
   const [pending, setPending] = useState(true);
   const [withdrawn, setWithdrawn] = useState(false);
   const [all, setAll] = useState(false);
   // const [done, setDone] = useState(false);
   const [
-    loading,
+    loadingP,
+    Run,
     purse,
     withrawalRequest,
     done,
@@ -40,6 +42,12 @@ const Wallet = ({navigation}) => {
     pendingR,
     history,
   ] = usePurse();
+
+  const navigation = useNavigation();
+  navigation.addListener('focus', e => {
+    // Prevent default action
+    Run();
+  });
 
   const handlePending = () => {
     setPending(true);
@@ -84,7 +92,7 @@ const Wallet = ({navigation}) => {
                 setModalView(true);
               }}>
               <Text style={styles.saveBtnTxt}>Withdraw</Text>
-              {loading && <ActivityIndicator />}
+              {loadingP && <ActivityIndicator />}
             </Button>
           </View>
           <View style={styles.btnGroup}>

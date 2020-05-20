@@ -34,15 +34,33 @@ import useAnalytics from '../../generalHooks/useAnalytics';
 import Achievements from '../../../../assets/archivement.svg';
 import Accepted from '../../../../assets/VendorRequest.svg';
 import Measurement from '../../../../assets/accepted.svg';
+import {useNavigation} from '@react-navigation/native';
 
-const TailorHomepage = ({route, navigation}) => {
+const TailorHomepage = ({route}) => {
   const [visible, setVisible] = useState(false);
   const [add, setAdd] = useState(false);
   // const [online, setonline] = useState(false);
   const [image, setImage] = useState({});
   const [images, setImages] = useState(false);
-  const [loading, handleToggle, online, profile, styled] = useVendorHome();
-  const [accepted, completed, reviews, message] = useAnalytics();
+  const [
+    loading,
+    handleToggle,
+    online,
+    profile,
+    styled,
+    RunVendorHome,
+  ] = useVendorHome();
+  const [accepted, completed, reviews, message, RunAnalytics] = useAnalytics();
+  const [
+    loadingP,
+    Run,
+    purse,
+    withrawalRequest,
+    done,
+    setDone,
+    pendingR,
+    history,
+  ] = usePurse();
 
   const Data = [
     {svg: <Accepted />, value: accepted, text: 'Requests Accepted'},
@@ -54,14 +72,14 @@ const TailorHomepage = ({route, navigation}) => {
     {svg: <Achievements />, value: 103, text: 'Achievements Unlocked'},
   ];
 
-  const [
-    purse,
-    withrawalRequest,
-    done,
-    setDone,
-    pendingR,
-    history,
-  ] = usePurse();
+  const navigation = useNavigation();
+  navigation.addListener('focus', e => {
+    // Prevent default action
+    Run();
+    RunAnalytics();
+    RunVendorHome();
+  });
+
   const options = {};
 
   const requestCameraPermission = async () => {
@@ -188,6 +206,7 @@ const TailorHomepage = ({route, navigation}) => {
             {Data.map(data => {
               return (
                 <Archivment
+                  key={data.text}
                   img={data.svg}
                   value={data.value}
                   text={data.text}
@@ -220,6 +239,7 @@ const TailorHomepage = ({route, navigation}) => {
               data.map(data => {
                 return (
                   <StatsLabel
+                    key={data.date}
                     time={data.time}
                     day={data.feedback}
                     title={data.name}
@@ -242,6 +262,7 @@ const TailorHomepage = ({route, navigation}) => {
               {styled.map(item => {
                 return (
                   <FabricStyle
+                    key={item.title}
                     status={true}
                     name={item.title}
                     location={item.location}

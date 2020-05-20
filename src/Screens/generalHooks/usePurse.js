@@ -6,7 +6,7 @@ import Instance from '../../Api/Instance';
 
 export default () => {
   const [purse, setPurse] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [LoadingP, setLoading] = useState(false);
   const [done, setDone] = useState(false);
   const [pendingR, setPending] = useState([]);
   const [history, setHistory] = useState([]);
@@ -69,7 +69,7 @@ export default () => {
     //**gets on-going projects */
   };
 
-  useEffect(() => {
+  const Run = () => {
     /**gets user purse */
     const request = new Promise(res => {
       res(
@@ -97,7 +97,6 @@ export default () => {
         });
       }
     });
-
     /**get pending withdrawals */
     const requestPending = new Promise(res => {
       res(
@@ -126,7 +125,16 @@ export default () => {
       let p = data.data;
       setHistory(data.data);
     });
-  }, [Style, access_token]);
+  };
 
-  return [loading, purse, withrawalRequest, done, setDone, pendingR, history];
+  return [
+    LoadingP,
+    Run,
+    purse,
+    withrawalRequest,
+    done,
+    setDone,
+    pendingR,
+    history,
+  ];
 };

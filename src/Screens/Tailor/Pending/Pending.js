@@ -29,7 +29,7 @@ const TailorPending = ({Measurements}) => {
   const [btn, setBtn] = useState('Arrived');
   const [dispatch, setDispatch] = useState(false);
   const [confirm, setConfirm] = useState(false);
-  const [openCarousel, setOpenCarousel] = useState(false);
+
   const [starCount, setStarCount] = useState(0);
   const [segment, setSegment] = useState(false);
   const [
@@ -45,6 +45,9 @@ const TailorPending = ({Measurements}) => {
     run,
     AcceptRequest,
     jobInfo,
+    resultsData,
+    openCarousel,
+    setOpenCarousel,
   ] = useRequest();
 
   const navigation = useNavigation();
@@ -65,7 +68,7 @@ const TailorPending = ({Measurements}) => {
         hidden={false}
       />
       <Spinner
-        visible={false}
+        visible={loading}
         textContent={'Loading...'}
         textStyle={styles.spinnerTextStyle}
       />
@@ -225,14 +228,12 @@ const TailorPending = ({Measurements}) => {
                         CompleteRequest(data.id);
                       }}
                       titleStyle={{color: '#000'}}
-                      loading={loading}
                     />
                     <Button
                       id={data.id}
                       title="Request Details"
                       buttonStyle={styles.btn}
                       onPress={() => {
-                        setOpenCarousel(true);
                         ViewRequest(data.id);
                       }}
                       titleStyle={{color: '#000'}}
@@ -372,8 +373,6 @@ const TailorPending = ({Measurements}) => {
                       title="Request Details"
                       buttonStyle={styles.btn}
                       onPress={() => {
-                        setOpenCarousel(true);
-
                         ViewRequest(data.id);
                       }}
                       titleStyle={{color: '#000'}}
@@ -412,6 +411,7 @@ const TailorPending = ({Measurements}) => {
           setReqMessage(' ');
         }}
         Message={reqMessages}
+        sewData={resultsData}
       />
     </SafeAreaView>
   );
@@ -423,7 +423,7 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'center',
     backgroundColor: '#fff',
-    height: heightPercentageToDP('100%'),
+    // height: heightPercentageToDP('100%'),
   },
   group: {
     paddingVertical: 19,

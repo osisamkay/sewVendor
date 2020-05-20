@@ -65,7 +65,7 @@ export default () => {
     //**gets on-going projects */
   };
 
-  useEffect(() => {
+  const RunVendorHome = () => {
     /**gets user profile */
     const request = new Promise(res => {
       res(
@@ -94,7 +94,38 @@ export default () => {
     requestStyles.then(({data: data}) => {
       setStyles(data.data);
     });
+  };
+
+  useEffect(() => {
+    // /**gets user profile */
+    // const request = new Promise(res => {
+    //   res(
+    //     Instance.get('vendors/profile?provider=vendor', {
+    //       headers: {
+    //         Authorization: 'Bearer ' + access_token,
+    //       },
+    //     }),
+    //   );
+    // });
+    // request.then(({data: data}) => {
+    //   console.log(data);
+    //   setProfile(data.data);
+    // });
+    // //**gets all styles */
+    // //**gets all materials */
+    // const requestStyles = new Promise(res => {
+    //   res(
+    //     Instance.get('styles?provider=vendor', {
+    //       headers: {
+    //         Authorization: 'Bearer ' + access_token,
+    //       },
+    //     }),
+    //   );
+    // });
+    // requestStyles.then(({data: data}) => {
+    //   setStyles(data.data);
+    // });
   }, [access_token]);
 
-  return [loading, handleToggle, online, profile, styled];
+  return [loading, handleToggle, online, profile, styled, RunVendorHome];
 };

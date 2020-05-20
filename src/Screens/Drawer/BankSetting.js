@@ -12,7 +12,6 @@ import {
   TextInput,
   SafeAreaView,
   Image,
-  ActivityIndicator,
 } from 'react-native';
 import {Header, Divider, Button} from 'react-native-elements';
 import {
@@ -31,23 +30,36 @@ import Spinner from 'react-native-loading-spinner-overlay';
 
 const BankSettings = ({navigation, closeModal, images, Add, image}) => {
   const [frequency, setFrequency] = useState('Frequency');
-  const [modalVisible, setModalVisible] = useState(false);
-  const [bvnModalVisible, setBvnModalVisible] = useState(false);
-  const [modalVisible2, setModalVisible2] = useState(false);
-  const [bankk, setBankk] = useState('');
+  const [bankk, setBankk] = useState('1');
   const [bvn, setBvn] = useState('');
   const [bankDets, setBankDets] = useState('');
   const [bankData, setBankdata] = useState({});
   const [vendor_bank_id, setvendor_bank_id] = useState('');
   const [
     loading,
+    Run,
     Bank,
     AddBank,
     currentBank,
     setDefault,
     reload,
     updateBvn,
+    modalVisible,
+    setModalVisible,
+    bvnModalVisible,
+    setBvnModalVisible,
+    DeleteBank,
+    deleteModal,
+    setDeleteModal,
+    modalVisible2,
+    setModalVisible2,
   ] = useBank();
+
+  navigation.addListener('focus', e => {
+    // Prevent default action
+    Run();
+  });
+
   const Dets = {bank_id: bankk, account_number: bankDets};
 
   const Dets2 = {vendor_bank_id};
@@ -93,7 +105,7 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
           />
         }
         centerComponent={{
-          text: <Text style={styles.maiHeaderTxt}>Withdraw Options</Text>,
+          text: <Text style={styles.maiHeaderTxt}>Bank Settings</Text>,
         }}
       />
       <ScrollView contentContainerStyle={styles.container}>
@@ -123,7 +135,7 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
               );
             })}
           </View>
-          {loading && <ActivityIndicator color="#000" size={30} />}
+
           <View style={styles.saveBtnGrp}>
             <Button
               title="Add Bank"
@@ -176,6 +188,35 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
               buttonStyle={styles.saveBtn}
               onPress={() => {
                 setBvnModalVisible(false);
+              }}
+            />
+          </View>
+        </View>
+      </Modal>
+      <Modal
+        animationType="fade"
+        transparent={true}
+        visible={deleteModal}
+        onRequestClose={closeModal}>
+        <View style={styles.addContainer}>
+          <View style={styles.addContainerGroup}>
+            <Text>Are you sure you want to delete {bankData.name}?</Text>
+          </View>
+          <View style={styles.saveBtnGrp2}>
+            <Button
+              title="Yes"
+              titleStyle={styles.saveBtnTxt}
+              buttonStyle={styles.saveBtn}
+              onPress={() => {
+                DeleteBank(vendor_bank_id);
+              }}
+            />
+            <Button
+              title="Cancel"
+              titleStyle={styles.saveBtnTxt}
+              buttonStyle={styles.saveBtn}
+              onPress={() => {
+                setDeleteModal(false);
               }}
             />
           </View>
@@ -293,7 +334,7 @@ const BankSettings = ({navigation, closeModal, images, Add, image}) => {
               titleStyle={styles.saveBtnTxt}
               buttonStyle={styles.saveBtn}
               onPress={() => {
-                // setDefault();
+                setDeleteModal(true);
               }}
             />
           </View>

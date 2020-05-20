@@ -35,9 +35,12 @@ const CarouselModal = ({
   Confirm,
   indexed,
   Message,
+  sewData,
 }) => {
   const [index, setIndex] = useState(indexed);
   const [sliderWidth, setSliderWidth] = useState(widthPercentageToDP('79%'));
+  // console.log('yes', sewData.measurement.properties);
+
   const message = [
     {
       title: <Text style={styles.msg}>{Message}</Text>,
@@ -47,21 +50,21 @@ const CarouselModal = ({
     {
       title: (
         <View>
-          <CompletedView Data={CompleteData} />
+          <CompletedView Data={sewData} />
         </View>
       ),
     },
     {
       title: (
         <View>
-          <MaterialView />
+          <MaterialView Data={sewData} />
         </View>
       ),
     },
     {
       title: (
         <View>
-          <NoteView />
+          <NoteView Data={sewData} />
         </View>
       ),
     },
@@ -91,7 +94,7 @@ const CarouselModal = ({
             layout={'stack'}
             layoutCardOffset={18}
             // ref={ref => (this.carousel = ref)}
-            data={Message !== ' ' ? message : carouselItems}
+            data={carouselItems}
             sliderWidth={sliderWidth}
             itemWidth={sliderWidth}
             renderItem={_renderItem}

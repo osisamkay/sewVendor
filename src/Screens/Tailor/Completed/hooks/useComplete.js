@@ -13,6 +13,8 @@ export default () => {
   const [status1, setStatus1] = useState(false);
   const options = {};
   const [Messages, setMessage] = useState('');
+  const [openCarousel, setOpenCarousel] = useState(false);
+  const [resultsData, setResultsData] = useState([]);
 
   const {userData, tailor_category_id} = useSelector(
     state => state.LoginReducer,
@@ -25,7 +27,37 @@ export default () => {
     borderRadius: 6,
   };
 
+  //** sort fabrics */
+  const ViewRequest = async job_id => {
+    setLoading(true);
+    setResultsData([]);
+    try {
+      const response = await Instance.get(
+        `vendors/tailor/jobs/${job_id}/details?provider=vendor`,
+        {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        },
+      );
+      let s = response.data.status;
+      let m = response.data.message;
+      if (s) {
+        console.log(response.data.data);
+        setResultsData(response.data.data);
+        setOpenCarousel(true);
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      //   setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
+  };
+
   const run = () => {
+    setLoading(true);
     const request = new Promise(res => {
       res(
         Instance.get('vendors/tailor/jobs/completed?provider=vendor', {
@@ -37,12 +69,11 @@ export default () => {
     });
     request
       .then(({data: data}) => {
-        console.log(data);
-
         let s = data.status;
         let m = data.message;
         if (s) {
           setResults(data.data);
+          setLoading(false);
         } else {
           setLoading(false);
           Toast.show({
@@ -57,8 +88,18 @@ export default () => {
       })
       .catch(err => {
         // alert(err);/
+        setLoading(false);
+        // alert(err);
       });
   };
 
-  return [loading, results, run];
+  return [
+    loading,
+    results,
+    run,
+    ViewRequest,
+    openCarousel,
+    setOpenCarousel,
+    resultsData,
+  ];
 };

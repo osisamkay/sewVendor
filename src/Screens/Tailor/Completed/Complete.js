@@ -22,8 +22,10 @@ import Sort from '../../../../assets/sort.svg';
 import CalendarPicker from 'react-native-calendar-picker';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import moment from 'moment';
-import CarouselModal from './CarouselModal';
+import CarouselModal from '../Pending/CarouselModal';
 import useComplete from './hooks/useComplete';
+
+import Spinner from 'react-native-loading-spinner-overlay';
 
 if (
   Platform.OS === 'android' &&
@@ -48,10 +50,17 @@ const Data = [
 const CompleteTailor = ({route}) => {
   const [search, setSearch] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState('Date');
-  const [carouselModal, setCarouselModal] = useState(false);
   const [display, setDisplay] = useState(false);
   const [user, SetUser] = useState('');
-  const [loading, results, run] = useComplete();
+  const [
+    loading,
+    results,
+    run,
+    ViewRequest,
+    openCarousel,
+    setOpenCarousel,
+    resultsData,
+  ] = useComplete();
 
   const navigation = useNavigation();
 
@@ -77,14 +86,13 @@ const CompleteTailor = ({route}) => {
     setDisplay(false);
   };
 
-  // handle completed request
-  const handleCompletedRequest = user => {
-    SetUser(user);
-    setCarouselModal(true);
-  };
-
   return (
     <SafeAreaView style={styles.container}>
+      <Spinner
+        visible={loading}
+        textContent={'Loading...'}
+        textStyle={styles.spinnerTextStyle}
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.sortContainer}>
           <View style={styles.sort}>
@@ -119,7 +127,7 @@ const CompleteTailor = ({route}) => {
               key={data.id}
               style={styles.TopView}
               onPress={() => {
-                handleCompletedRequest(data);
+                ViewRequest(data.id);
               }}>
               <View style={styles.reqTop}>
                 <View style={styles.user}>
@@ -138,10 +146,11 @@ const CompleteTailor = ({route}) => {
         })}
       </ScrollView>
       <CarouselModal
-        modalVisible={carouselModal}
+        modalVisible={openCarousel}
         closeModal={() => {
-          setCarouselModal(false);
+          setOpenCarousel(false);
         }}
+        sewData={resultsData}
       />
     </SafeAreaView>
   );

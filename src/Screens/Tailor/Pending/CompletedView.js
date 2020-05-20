@@ -15,6 +15,7 @@ import {
   heightPercentageToDP,
 } from 'react-native-responsive-screen';
 import StarRating from 'react-native-star-rating';
+import moment from 'moment';
 
 const CompletedView = ({
   modalVisible,
@@ -27,6 +28,8 @@ const CompletedView = ({
   Edit,
   Report,
 }) => {
+  console.log(Data);
+
   return (
     <View style={styles.container}>
       <View style={styles.group}>
@@ -49,14 +52,14 @@ const CompletedView = ({
                   color: '#000',
                   fontSize: heightPercentageToDP('1.875%'),
                 }}>
-                User 098
+                {Data.user.first_name + ' ' + Data.user.last_name}
               </Text>
               <Text
                 style={{
                   color: '#000',
                   fontSize: heightPercentageToDP('1.5%'),
                 }}>
-                Senetor with Cap
+                {Data.order_name}
               </Text>
             </View>
           </View>
@@ -66,7 +69,7 @@ const CompletedView = ({
                 color: '#000',
                 fontSize: heightPercentageToDP('1.25%'),
               }}>
-              Due In 7 Days
+              Due by {moment(Data.dead_line_date).format('YYYY-MM-DD')}
             </Text>
             <Text
               style={{
@@ -79,17 +82,13 @@ const CompletedView = ({
         </View>
 
         <ScrollView showsVerticalScrollIndicator={false}>
-          {Data.map(data => (
+          <Text style={styles.MesurementTitle}>{Data.measurement.title}</Text>
+          {Data.measurement.properties.map(data => (
             <>
-              <Text style={styles.MesurementTitle}>{data.title}</Text>
-              {data.measurement.map(data => {
-                return (
-                  <View style={styles.list}>
-                    <Text>{data.name}</Text>
-                    <Text>{data.size}</Text>
-                  </View>
-                );
-              })}
+              <View style={styles.list}>
+                <Text>{data.cat_prop.title}</Text>
+                <Text>{data.size}</Text>
+              </View>
             </>
           ))}
         </ScrollView>

@@ -15,6 +15,7 @@ import {
   heightPercentageToDP,
 } from 'react-native-responsive-screen';
 import Camera from '../../../../assets/camera.svg';
+import moment from 'moment';
 
 const MaterialView = ({
   modalVisible,
@@ -27,6 +28,11 @@ const MaterialView = ({
   Edit,
   Report,
 }) => {
+  let styleImage = {
+    uri: `${Data.style.img_url}`,
+  };
+  // let styleImage2 = ;
+
   return (
     <View style={styles.container}>
       <View style={styles.group}>
@@ -49,14 +55,14 @@ const MaterialView = ({
                   color: '#000',
                   fontSize: heightPercentageToDP('1.875%'),
                 }}>
-                User 098
+                {Data.user.first_name + ' ' + Data.user.last_name}
               </Text>
               <Text
                 style={{
                   color: '#000',
                   fontSize: heightPercentageToDP('1.5%'),
                 }}>
-                Senetor with Cap
+                {Data.order_name}
               </Text>
             </View>
           </View>
@@ -66,7 +72,7 @@ const MaterialView = ({
                 color: '#000',
                 fontSize: heightPercentageToDP('1.25%'),
               }}>
-              Due In 7 Days
+              Due by {moment(Data.dead_line_date).format('YYYY-MM-DD')}
             </Text>
             <Text
               style={{
@@ -81,17 +87,19 @@ const MaterialView = ({
         <ScrollView showsVerticalScrollIndicator={false}>
           <Text style={styles.ref}>Reference</Text>
           <View style={styles.ImageView}>
-            <Camera />
+            <Image
+              source={styleImage}
+              style={styles.styleImager}
+              resizeMode="contain"
+            />
           </View>
-          <View style={styles.ImageView}>
-            <Camera />
-          </View>
+
           <Text style={styles.ref}>Material</Text>
           <View style={styles.MaterialContainer}>
             <View style={styles.blub} />
             <View>
-              <Text style={styles.blubText}>Material Name</Text>
-              <Text style={styles.blubTxt}>Vendor - Material status</Text>
+              <Text style={styles.blubText}>{Data.fabric.title}</Text>
+              <Text style={styles.blubTxt}>{Data.fabric.approval}</Text>
               <Text style={styles.blubTxt}>6 Yards</Text>
             </View>
           </View>
@@ -199,11 +207,19 @@ const styles = StyleSheet.create({
   },
   ImageView: {
     backgroundColor: '#707070',
-    height: heightPercentageToDP('14.8%'),
+    height: heightPercentageToDP('35%'),
     borderRadius: 8,
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 10,
+  },
+  styleImager: {
+    // backgroundColor: '#000',
+    height: heightPercentageToDP('35%'),
+    width: widthPercentageToDP('70%'),
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   ref: {
     marginVertical: 10,

@@ -8,9 +8,11 @@ import {Toast} from 'native-base';
 
 export default () => {
   const [results, setResults] = useState([]);
+  const [resultsData, setResultsData] = useState([]);
   const [resultsOngoing, setResultsOngoing] = useState([]);
   const [loading, setLoading] = useState(false);
   const [status1, setStatus1] = useState(false);
+  const [openCarousel, setOpenCarousel] = useState(false);
   const options = {};
   const [Messages, setMessage] = useState('');
   const [reqMessages, setReqMessage] = useState('');
@@ -29,6 +31,7 @@ export default () => {
   //** sort fabrics */
   const ViewRequest = async job_id => {
     setLoading(true);
+    setResultsData([]);
     try {
       const response = await Instance.get(
         `vendors/tailor/jobs/${job_id}/details?provider=vendor`,
@@ -41,7 +44,8 @@ export default () => {
       let s = response.data.status;
       let m = response.data.message;
       if (s) {
-        setResults(response.data.data);
+        setResultsData(response.data.data);
+        setOpenCarousel(true);
         setLoading(false);
       } else {
         setLoading(false);
@@ -118,6 +122,7 @@ export default () => {
       let m = response.data.message;
       if (s) {
         setResults(response.data.data);
+
         setLoading(false);
       } else {
         setLoading(false);
@@ -279,5 +284,8 @@ export default () => {
     run,
     AcceptRequest,
     jobInfo,
+    resultsData,
+    openCarousel,
+    setOpenCarousel,
   ];
 };
