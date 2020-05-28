@@ -12,6 +12,7 @@ const {
   CHANGE_PASSWORD,
   LOGOUT_USER,
   GET_TAILOR_CAT_ID,
+  PLAYER_CALLED,
 } = actionType;
 
 export const loginUser = payload => ({
@@ -57,5 +58,9 @@ export const logoutUser = payload => ({
 });
 export const gettailorid = payload => ({
   type: GET_TAILOR_CAT_ID,
+  payload,
+});
+export const callplayer = payload => ({
+  type: PLAYER_CALLED,
   payload,
 });

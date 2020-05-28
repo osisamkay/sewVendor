@@ -13,6 +13,7 @@ const {
   CHANGE_PASSWORD_SUCCESS,
   LOGOUT_USER,
   GET_TAILOR_CAT_ID,
+  PLAYER_CALLED,
 } = actionType;
 
 const initialState = {
@@ -23,6 +24,7 @@ const initialState = {
   recovered: false,
   loading: false,
   tailor_category_id: 0,
+  playerCalled: false,
 };
 
 export const LoginReducer = (state = initialState, {type, payload}) => {
@@ -68,6 +70,9 @@ export const LoginReducer = (state = initialState, {type, payload}) => {
     case GET_TAILOR_CAT_ID:
       return {...state, loading: false, tailor_category_id: payload};
 
+    case PLAYER_CALLED:
+      return {...state, playerCalled: true};
+
     case LOGOUT_USER:
       return {
         ...state,
@@ -77,6 +82,7 @@ export const LoginReducer = (state = initialState, {type, payload}) => {
         isError: false,
         recovered: false,
         loading: false,
+        playerCalled: false,
       };
 
     default:

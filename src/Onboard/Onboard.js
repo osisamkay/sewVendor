@@ -17,20 +17,6 @@ import DeviceInfo from 'react-native-device-info';
 const Onboard = () => {
   const navigation = useNavigation();
 
-  const oneSignal = async () => {
-    try {
-      //   const deviceInfo=await
-      let systemName = DeviceInfo.getSystemName();
-      let version = await DeviceInfo.getVersion();
-      console.log(version, systemName);
-    } catch (err) {
-      //   clg(err);
-    }
-  };
-
-  navigation.addListener('focus', () => {
-    oneSignal();
-  });
   return (
     <View>
       <View style={{width: '100%', height: '100%', backgroundColor: 'black'}}>

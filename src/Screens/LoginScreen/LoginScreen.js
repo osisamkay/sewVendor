@@ -19,7 +19,7 @@ import Inputs from '../../components/Inputs';
 import {Button} from 'react-native-elements';
 import {LoginInput} from './LoginInputs';
 import Icon from 'react-native-vector-icons/Feather';
-import {loginUser} from './Action/Action';
+import {loginUser, callplayer} from './Action/Action';
 
 import OneSignal from 'react-native-onesignal';
 import Instance from '../../Api/Instance';
@@ -27,61 +27,70 @@ import Instance from '../../Api/Instance';
 const LoginScreen = ({navigation}) => {
   const [values, setValues] = useState({});
   const [show, setShow] = useState(true);
-  const {loading, userData, isLogged} = useSelector(
+  const {loading, userData, isLogged, playerCalled} = useSelector(
     state => state.LoginReducer,
   );
-  let {access_token} = userData;
+  // let {access_token} = userData;
 
   const dispatch = useDispatch();
   const propOwn = Object.getOwnPropertyNames(values);
 
   useEffect(() => {
     if (isLogged) {
-      // let reg_type = userData.profile.vendor_category_id;
-      // if (reg_type == 1) {
-      //   navigation.navigate('Measurer');
-      // } else if (reg_type == 2) {
-      //   navigation.navigate('Tailor');
-      // } else if (reg_type == 3) {
-      //   navigation.navigate('Vendor');
-      // } else {
-      //   null;
-      // }
-      OneSignal.setLogLevel(6, 0);
-
-      // Replace 'YOUR_ONESIGNAL_APP_ID' with your OneSignal App ID.
-      OneSignal.init('f17d3511-9863-487a-897b-582650cd07c2', {
-        kOSSettingsKeyAutoPrompt: false,
-        kOSSettingsKeyInAppLaunchURL: false,
-        kOSSettingsKeyInFocusDisplayOption: 2,
-      });
-      OneSignal.inFocusDisplaying(2);
-
-      OneSignal.promptForPushNotificationsWithUserResponse(myiOSPromptCallback);
-
-      OneSignal.addEventListener('ids', onIds);
-
-      function onIds(device) {
-        console.log('Device info: ', device);
-        let player = {one_signal_player_id: device.userId};
-
-        const signal = new Promise(res => {
-          res(
-            Instance.post('onsignal/init?provider=vendor', player, {
-              header: {Authorization: 'Bearer ' + access_token},
-            }),
-          );
-        });
-        signal.then(data => {
-          console.log(data);
-        });
+      let reg_type = userData.profile.vendor_category_id;
+      let {access_token} = userData;
+      if (reg_type == 1) {
+        navigation.navigate('Measurer');
+      } else if (reg_type == 2) {
+        navigation.navigate('Tailor');
+      } else if (reg_type == 3) {
+        navigation.navigate('Vendor');
+      } else {
+        null;
       }
+      if (!playerCalled) {
+        OneSignal.setLogLevel(6, 0);
 
-      function myiOSPromptCallback(permission) {
-        // do something with permission value
+        // Replace 'YOUR_ONESIGNAL_APP_ID' with your OneSignal App ID.
+        OneSignal.init('f17d3511-9863-487a-897b-582650cd07c2', {
+          kOSSettingsKeyAutoPrompt: false,
+          kOSSettingsKeyInAppLaunchURL: false,
+          kOSSettingsKeyInFocusDisplayOption: 2,
+        });
+        OneSignal.inFocusDisplaying(2);
+
+        OneSignal.promptForPushNotificationsWithUserResponse(
+          myiOSPromptCallback,
+        );
+
+        OneSignal.addEventListener('ids', onIds);
+
+        function onIds(device) {
+          let player = {one_signal_player_id: device.userId};
+
+          const signal = new Promise(res => {
+            res(
+              Instance.post('onsignal/init?provider=vendor', player, {
+                headers: {
+                  Authorization: 'Bearer ' + access_token,
+                },
+              }),
+            );
+          });
+          signal.then(({data: data}) => {
+            let s = data.status;
+            if (s) {
+              dispatch(callplayer('nothing'));
+            }
+          });
+        }
+
+        function myiOSPromptCallback(permission) {
+          // do something with permission value
+        }
       }
     }
-  }, [navigation, isLogged, userData, access_token]);
+  }, [navigation, isLogged, userData, dispatch, playerCalled]);
   return (
     <SafeAreaView>
       <KeyboardAvoidingView

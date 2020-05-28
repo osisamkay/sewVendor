@@ -258,7 +258,7 @@ const styles = StyleSheet.create({
   },
   top: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-around',
     marginVertical: 17,
   },
   review: {
