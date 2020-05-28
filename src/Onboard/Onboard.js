@@ -11,8 +11,26 @@ import {
   widthPercentageToDP,
   heightPercentageToDP,
 } from 'react-native-responsive-screen';
+import {useNavigation} from '@react-navigation/native';
+import DeviceInfo from 'react-native-device-info';
 
-const Onboard = ({navigation}) => {
+const Onboard = () => {
+  const navigation = useNavigation();
+
+  const oneSignal = async () => {
+    try {
+      //   const deviceInfo=await
+      let systemName = DeviceInfo.getSystemName();
+      let version = await DeviceInfo.getVersion();
+      console.log(version, systemName);
+    } catch (err) {
+      //   clg(err);
+    }
+  };
+
+  navigation.addListener('focus', () => {
+    oneSignal();
+  });
   return (
     <View>
       <View style={{width: '100%', height: '100%', backgroundColor: 'black'}}>
@@ -24,6 +42,7 @@ const Onboard = ({navigation}) => {
             style={styles.buttonContainer}
             onPress={() => {
               navigation.navigate('OnboardCarousel');
+              // oneSignal();
             }}>
             <View style={styles.button}>
               <Text style={styles.text}>Get Started</Text>
