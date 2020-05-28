@@ -1,43 +1,64 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState} from 'react';
 import Profile from './assets/Profile.svg';
 import {
   DrawerContentScrollView,
   DrawerItemList,
   DrawerItem,
 } from '@react-navigation/drawer';
-import {View, Text, StyleSheet} from 'react-native';
-import {heightPercentageToDP} from 'react-native-responsive-screen';
+import {View, Text, StyleSheet, Image} from 'react-native';
+import {
+  heightPercentageToDP,
+  widthPercentageToDP,
+} from 'react-native-responsive-screen';
 import AsyncStorage from '@react-native-community/async-storage';
 import {useDispatch, useSelector} from 'react-redux';
 import {logoutUser} from './src/Screens/LoginScreen/Action/Action';
+import useProfile from './src/Screens/generalHooks/useProfile';
+import {useNavigation} from '@react-navigation/native';
 
-function CustomDrawerContent({progress, navigation, ...rest}) {
+function CustomDrawerContent({progress, ...rest}) {
   const [visible, setVisible] = useState(false);
-  const [name, setName] = useState(false);
-  // const [result] = useProfile();
-  const {loading, userData, isLogged} = useSelector(
-    state => state.LoginReducer,
-  );
+  const [name, setName] = useState(' ');
+  const [
+    loading,
+    setLoading,
+    online,
+    profile,
+    getProfile,
+    updateProfile,
+    updatePassword,
+    password,
+    setPassword,
+  ] = useProfile();
+  const {userData, isLogged} = useSelector(state => state.LoginReducer);
 
+  const navigation = useNavigation();
+  navigation.addListener('focus', () => {
+    getProfile();
+  });
   const dispatch = useDispatch();
   //
-  useEffect(() => {
-    if (isLogged) {
-      let firstnamw = userData.profile.first_name;
-      let lastname = userData.profile.last_name;
-      const n = firstnamw + ' ' + lastname;
-      setName(n);
-    }
-  }, [isLogged, userData]);
+
+  const pix = {
+    uri: profile.profile_pix,
+  };
   return (
     <DrawerContentScrollView {...rest}>
       <View>
         <View>
           <View style={styles.container}>
-            <Profile />
             <View>
-              <Text style={styles.name}>{name}</Text>
-              <Text style={styles.number}>4.46</Text>
+              {profile.profile_pix === null ? (
+                <Profile />
+              ) : (
+                <Image source={pix} style={styles.imaged} />
+              )}
+            </View>
+            <View>
+              <Text style={styles.name}>
+                {profile.first_name + ' ' + profile.last_name}
+              </Text>
+              {/* <Text style={styles.number}>4.46</Text> */}
             </View>
           </View>
         </View>
@@ -92,6 +113,7 @@ const styles = StyleSheet.create({
     fontFamily: 'GT Walsheim Pro Regular Regular',
     fontSize: 20,
     color: 'white',
+    width: widthPercentageToDP('42%'),
   },
   number: {
     fontFamily: 'GT Walsheim Pro Regular Regular',
@@ -102,5 +124,11 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: heightPercentageToDP('2.4%'),
     fontFamily: 'GT Walsheim Pro Regular Regular',
+  },
+  imaged: {
+    width: widthPercentageToDP('20%'),
+    height: heightPercentageToDP('11.5%'),
+    borderRadius: 100,
+    marginRight: 10,
   },
 });

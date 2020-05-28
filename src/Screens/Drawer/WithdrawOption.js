@@ -24,16 +24,23 @@ import {Picker} from 'native-base';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import {Button, Textarea, Card} from 'native-base';
 import useWithdrawals from '../generalHooks/useWithdrawals';
+import {useNavigation} from '@react-navigation/native';
 
-const WithdrawOption = ({navigation, closeModal, images, Add, image}) => {
+const WithdrawOption = ({closeModal, images, Add, image}) => {
   const [frequency, setFrequency] = useState('Frequency');
   const [
     loading,
+    Details,
     options,
     currentBank,
     withrawalOption,
-    reload,
   ] = useWithdrawals();
+
+  const navigation = useNavigation();
+
+  navigation.addListener('focus', () => {
+    Details();
+  });
 
   return (
     <SafeAreaView style={{flex: 1}}>

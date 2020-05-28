@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {PermissionsAndroid} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
@@ -197,32 +197,6 @@ export default () => {
       //   setErrorMessage('Something went wrong');
       setLoading(false);
     }
-
-    /**get all ongoing requests */
-    // const requestOngoing = new Promise(res => {
-    //   res(
-    //     Instance.get('vendors/tailor/jobs/ongoing?provider=vendor', {
-    //       headers: {
-    //         Authorization: 'Bearer ' + access_token,
-    //       },
-    //     }),
-    //   );
-    // });
-    // requestOngoing
-    //   .then(({data: data}) => {
-    //     let s = data.status;
-    //     let m = data.message;
-    //     if (s) {
-    //       setResultsOngoing(data.data);
-    //       setStatus1(s);
-    //     } else {
-    //       setStatus1(s);
-    //       setMessage(m);
-    //     }
-    //   })
-    //   .catch(err => {
-    //     // console.log(object);
-    //   });
   };
 
   /**to accept requests */

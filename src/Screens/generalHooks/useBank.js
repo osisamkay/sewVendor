@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {Toast} from 'native-base';
 import {widthPercentageToDP} from 'react-native-responsive-screen';

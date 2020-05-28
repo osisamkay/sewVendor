@@ -23,6 +23,8 @@ import moment from 'moment';
 import CompletedModal from './CompletedModal';
 import {CompleteData} from './CompleteData';
 import useSold from './hooks/useSold';
+import {useNavigation} from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 if (
   Platform.OS === 'android' &&
@@ -44,7 +46,7 @@ const Data = [
   },
 ];
 
-const CompleteVendor = ({route, navigation}) => {
+const CompleteVendor = ({route}) => {
   const [search, setSearch] = useState('');
   const [selectedStartDate, setSelectedStartDate] = useState('Date');
   const [CompletedModalView, setCompletedModalView] = useState(false);
@@ -52,7 +54,14 @@ const CompleteVendor = ({route, navigation}) => {
   const [reportModal, setReportModal] = useState(false);
   const [display, setDisplay] = useState(false);
   const [user, SetUser] = useState('');
-  const [sold] = useSold();
+  const [loadings, sold, RunSold, FilterByDate] = useSold();
+
+  let navigation = useNavigation();
+
+  navigation.addListener('focus', () => {
+    RunSold();
+  });
+
   const updateSearch = search => {
     let value = search;
     setSearch(value);
@@ -66,7 +75,8 @@ const CompleteVendor = ({route, navigation}) => {
 
   //set Date change
   const onDateChange = date => {
-    let selected = moment(date).format('Do MMM YYYY');
+    let selected = moment(date).format('YYYY-MM-DD');
+    FilterByDate(selected);
     setSelectedStartDate(selected);
     setDisplay(false);
   };
@@ -79,6 +89,11 @@ const CompleteVendor = ({route, navigation}) => {
 
   return (
     <SafeAreaView style={styles.container}>
+      <Spinner
+        visible={loadings}
+        textContent={'Please Wait...'}
+        textStyle={styles.spinnerTextStyle}
+      />
       <ScrollView showsVerticalScrollIndicator={false}>
         <View style={styles.sortContainer}>
           <View style={styles.sort}>
@@ -107,13 +122,13 @@ const CompleteVendor = ({route, navigation}) => {
             </View>
           </View>
         </View>
-        {Data.map(data => {
+        {sold.map(data => {
           return (
             <TouchableOpacity
-              key={data.id}
+              key={data.job_id}
               style={styles.TopView}
               onPress={() => {
-                handleCompletedRequest(data.user);
+                // handleCompletedRequest(data);
               }}>
               <View
                 style={{
@@ -124,12 +139,16 @@ const CompleteVendor = ({route, navigation}) => {
                   paddingBottom: 10,
                 }}>
                 <Text style={{color: '#fff', fontSize: 19}}>
-                  Material Name
+                  {data.material.title}
                   <Text style={{color: '#5CE3D9', fontSize: 13}}>
                     {'     '}7 yard
                   </Text>
                 </Text>
-                <Text style={{color: '#5CE3D9', fontSize: 13}}>Today</Text>
+                <Text style={{color: '#5CE3D9', fontSize: 13}}>
+                  NGN{' '}
+                  {parseInt(`${data.material.price_per_yard}`).toLocaleString()}
+                  /Yard
+                </Text>
               </View>
               <View style={styles.reqTop}>
                 <View style={styles.user}>
@@ -137,7 +156,9 @@ const CompleteVendor = ({route, navigation}) => {
                     source={require('../../../../assets/Profile.png')}
                     style={styles.img}
                   />
-                  <Text style={styles.usertxt}>{data.user}</Text>
+                  <Text style={styles.usertxt}>
+                    {data.user.first_name + ' ' + data.user.last_name}
+                  </Text>
                 </View>
                 <Text style={styles.distance}>{data.distance}</Text>
               </View>

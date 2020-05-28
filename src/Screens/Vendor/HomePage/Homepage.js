@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -56,13 +56,15 @@ const VendorHomepage = ({route}) => {
     setDone,
     pendingR,
     history,
+    msg,
   ] = usePurse();
-  const [Achievements, completed, reviews, message] = useAnalytics();
+  const [Analytics, Achievements, completed, reviews, message] = useAnalytics();
 
   const navigation = useNavigation();
-  navigation.addListener('focus', e => {
+  navigation.addListener('focus', async e => {
     // Prevent default action
-    Run();
+    await Run();
+    await Analytics();
   });
 
   const data = [
@@ -114,41 +116,31 @@ const VendorHomepage = ({route}) => {
         contentContainerStyle={styles.container}>
         <View style={styles.group}>
           <View style={styles.TopView}>
-            {/* <View style={styles.status}>
-              <Text style={styles.TopTxt}>
-                {switchValue ? (
-                  <View style={styles.spot} />
-                ) : (
-                  <View style={styles.greySpot} />
-                )}
-                {switchValue ? ' Online' : ' Offline'}
+            {msg !== '' && (
+              <Text
+                style={{
+                  color: '#5CE3D9',
+                  textAlign: 'center',
+                  paddingVertical: 100,
+                }}>
+                {msg}
               </Text>
-              <View style={styles.Switches}>
-                <Switches
-                  shape={'pill'}
-                  buttonColor="#000"
-                  buttonSize={17}
-                  showText={false}
-                  sliderHeight={heightPercentageToDP('3.45%')}
-                  sliderWidth={widthPercentageToDP('11%')}
-                  colorSwitchOn="#5CE3D9"
-                  colorSwitchOff="#707070"
-                  onChange={() => setSwitchValue(!switchValue)}
-                  borderColor={switchValue ? '#5CE3D9' : '#707070'}
-                  value={switchValue}
-                  animationDuration={100}
-                />
+            )}
+            {msg == '' && (
+              <View>
+                <View style={styles.Wallet}>
+                  <Wallet />
+                </View>
+                <Text style={styles.bal}>Sew Balance</Text>
+                <Text style={styles.amt}>
+                  {purse.length <= 0 ? '0' : purse.current_balance}
+                  <Text style={styles.amts}>NGN</Text>
+                </Text>
+                <Text style={styles.dueDate}>
+                  Next withdrawal due 7th April 20
+                </Text>
               </View>
-            </View> */}
-            <View style={styles.Wallet}>
-              <Wallet />
-            </View>
-            <Text style={styles.bal}>Sew Balance</Text>
-            <Text style={styles.amt}>
-              {purse.length <= 0 ? '0' : purse.current_balance}
-              <Text style={styles.amts}>NGN</Text>
-            </Text>
-            <Text style={styles.dueDate}>Next withdrawal due 7th April 20</Text>
+            )}
           </View>
           <View style={styles.top}>
             {Data.map(data => {
@@ -172,7 +164,7 @@ const VendorHomepage = ({route}) => {
               </TouchableOpacity>
             </View>
             <View style={styles.fabrics}>
-              {materials.length <= 0 && <ActivityIndicator size={20} />}
+              {/* {materials.length <= 0 && <ActivityIndicator size={20} />} */}
               {materials.map(item => {
                 return (
                   <FabricStyle
@@ -191,7 +183,7 @@ const VendorHomepage = ({route}) => {
               })}
             </View>
           </View>
-          <View style={styles.review}>
+          {/* <View style={styles.review}>
             <View style={styles.stats}>
               <Text style={styles.stats_title}>Reviews</Text>
               <View style={{flexDirection: 'row', alignItems: 'center'}}>
@@ -206,7 +198,12 @@ const VendorHomepage = ({route}) => {
                 />
               </View>
             </View>
-            {data.map(data => {
+            {reviews.length <= 0 ? (
+              <Text style={styles.msg}>{message}</Text>
+            ) : (
+              <ActivityIndicator />
+            )}
+            {reviews.map(data => {
               return (
                 <StatsLabel
                   time={data.time}
@@ -216,8 +213,8 @@ const VendorHomepage = ({route}) => {
                 />
               );
             })}
-          </View>
-          <View style={styles.materialContainer}>
+          </View> */}
+          {/* <View style={styles.materialContainer}>
             <View style={styles.materialContainerTop}>
               <Text style={styles.materialContainerTxt}>Featured</Text>
             </View>
@@ -237,7 +234,7 @@ const VendorHomepage = ({route}) => {
                 );
               })}
             </View>
-          </View>
+          </View> */}
         </View>
       </ScrollView>
       <View style={{position: 'relative'}}>
@@ -430,5 +427,10 @@ const styles = StyleSheet.create({
   },
   bigBtnText: {
     fontSize: heightPercentageToDP('6%'),
+  },
+  msg: {
+    color: '#fff',
+    textAlign: 'center',
+    paddingVertical: heightPercentageToDP('2%'),
   },
 });

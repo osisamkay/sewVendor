@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {Toast} from 'native-base';
 import {widthPercentageToDP} from 'react-native-responsive-screen';
@@ -10,6 +10,7 @@ export default () => {
   const [done, setDone] = useState(false);
   const [pendingR, setPending] = useState([]);
   const [history, setHistory] = useState([]);
+  const [msg, setMsg] = useState('');
 
   const {userData} = useSelector(state => state.LoginReducer);
   let {access_token} = userData;
@@ -70,6 +71,7 @@ export default () => {
   };
 
   const Run = () => {
+    setLoading(true);
     /**gets user purse */
     const request = new Promise(res => {
       res(
@@ -86,6 +88,7 @@ export default () => {
       let m = data.message;
       if (s) {
         setPurse(data.data);
+        setLoading(false);
       } else {
         Toast.show({
           text: m,
@@ -95,6 +98,8 @@ export default () => {
           duration: 5000,
           style: Style,
         });
+        setMsg(m);
+        setLoading(false);
       }
     });
     /**get pending withdrawals */
@@ -136,5 +141,6 @@ export default () => {
     setDone,
     pendingR,
     history,
+    msg,
   ];
 };

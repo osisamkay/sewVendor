@@ -60,7 +60,7 @@ const TailorPending = ({Measurements}) => {
     setStarCount(rating);
   };
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{flex: 1, backgroundColor: '#fff'}}>
       <StatusBar
         backgroundColor="#fff"
         barStyle="dark-content"

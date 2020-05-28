@@ -7,7 +7,6 @@ import {
   StatusBar,
   ScrollView,
   Modal,
-  ActivityIndicator,
 } from 'react-native';
 import {
   heightPercentageToDP,
@@ -18,6 +17,7 @@ import WalletModal from './WalletModal';
 import Ok from '../../../../assets/ok.svg';
 import usePurse from '../../generalHooks/usePurse';
 import {useNavigation} from '@react-navigation/native';
+import Spinner from 'react-native-loading-spinner-overlay';
 
 const data = [
   {name: 'Sew Points', time: '34 mins ago', amount: 'N 3100'},
@@ -41,6 +41,7 @@ const Wallet = () => {
     setDone,
     pendingR,
     history,
+    msg,
   ] = usePurse();
 
   const navigation = useNavigation();
@@ -73,27 +74,45 @@ const Wallet = () => {
         showHideTransition
         hidden={false}
       />
+      <Spinner
+        visible={loadingP}
+        textContent={'Please Wait...'}
+        textStyle={styles.spinnerTextStyle}
+      />
       <ScrollView
         showsVerticalScrollIndicator={false}
         contentContainerStyle={styles.container}>
         <View style={styles.group}>
           <View style={styles.TopView}>
-            <Text style={styles.bal}>Sew Balance</Text>
-            <Text style={styles.amt}>
-              {purse.current_balance}
-              <Text style={{fontSize: 16}}>NGN</Text>
-            </Text>
-            <Text style={styles.dueDate}>
-              Next withdrawal due 7th April 2020
-            </Text>
-            <Button
-              style={styles.saveBtn}
-              onPress={() => {
-                setModalView(true);
-              }}>
-              <Text style={styles.saveBtnTxt}>Withdraw</Text>
-              {loadingP && <ActivityIndicator />}
-            </Button>
+            {msg !== '' && (
+              <Text
+                style={{
+                  color: '#5CE3D9',
+                  textAlign: 'center',
+                  paddingVertical: 100,
+                }}>
+                {msg}
+              </Text>
+            )}
+            {msg === '' && (
+              <View>
+                <Text style={styles.bal}>Sew Balance</Text>
+                <Text style={styles.amt}>
+                  {purse.current_balance}
+                  <Text style={{fontSize: 16}}>NGN</Text>
+                </Text>
+                <Text style={styles.dueDate}>
+                  Next withdrawal due 7th April 2020
+                </Text>
+                <Button
+                  style={styles.saveBtn}
+                  onPress={() => {
+                    setModalView(true);
+                  }}>
+                  <Text style={styles.saveBtnTxt}>Withdraw</Text>
+                </Button>
+              </View>
+            )}
           </View>
           <View style={styles.btnGroup}>
             <Button
@@ -365,5 +384,8 @@ const styles = StyleSheet.create({
   },
   headerAddContainer: {
     alignItems: 'center',
+  },
+  spinnerTextStyle: {
+    color: '#FFF',
   },
 });

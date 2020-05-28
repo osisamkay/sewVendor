@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {PermissionsAndroid} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
@@ -59,35 +59,43 @@ export default () => {
     //**gets on-going projects */
   };
 
-  useEffect(() => {
-    /**gets withdwawal options */
-    const requestOptions = new Promise(res => {
-      res(
-        Instance.get('vendors/withdrawals/options?provider=vendor', {
+  const Details = async () => {
+    setLoading(true);
+    try {
+      const response = await Instance.get(
+        `vendors/withdrawals/options?provider=vendor`,
+        {
           headers: {
             Authorization: 'Bearer ' + access_token,
           },
-        }),
+        },
       );
-    });
-    requestOptions.then(({data: data}) => {
-      setOptions(data.data);
-    });
-    /**get current banks */
-    const requestMyBanks = new Promise(res => {
-      res(
-        Instance.get('vendors/banks?provider=vendor', {
-          headers: {
-            Authorization: 'Bearer ' + access_token,
-          },
-        }),
-      );
-    });
-    requestMyBanks.then(({data: data}) => {
-      console.log(data);
-      setCurrentBank(data.data);
-    });
-  }, [access_token]);
+      let s = response.data.status;
+      let m = response.data.message;
+      if (s) {
+        setOptions(response.data.data);
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+      //**gets ongoing projects */
+      const response2 = await Instance.get('vendors/banks?provider=vendor', {
+        headers: {
+          Authorization: 'Bearer ' + access_token,
+        },
+      });
+      let s2 = response2.data.status;
+      let m2 = response2.data.message;
+      if (s2) {
+        setCurrentBank(response2.data.data);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      // setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
+  };
 
-  return [loading, options, currentBank, withrawalOption];
+  return [loading, Details, options, currentBank, withrawalOption];
 };

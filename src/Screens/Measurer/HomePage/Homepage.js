@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -21,10 +21,44 @@ import Archivment from './Archivment';
 import {Data} from './ArchivmentData';
 import StatsLabel from '../../../components/StatsLabel';
 import StarRating from 'react-native-star-rating';
+import usePurse from '../../generalHooks/usePurse';
+import {useNavigation} from '@react-navigation/native';
+import useAnalytics from '../hooks/useAnalytics';
+import Achievements from '../../../../assets/archivement.svg';
+import Accepted from '../../../../assets/accepted.svg';
+import Measurement from '../../../../assets/measurement.svg';
 
-const Homepage = ({route, navigation}) => {
+const Homepage = ({route}) => {
   const [visible, setVisible] = useState(false);
   const [switchValue, setSwitchValue] = useState(false);
+  const [
+    loadingP,
+    Run,
+    purse,
+    withrawalRequest,
+    done,
+    setDone,
+    pendingR,
+    history,
+  ] = usePurse();
+  const [accepted, completed, reviews, message, RunAnalytics] = useAnalytics();
+
+  const navigation = useNavigation();
+  navigation.addListener('focus', async e => {
+    // Prevent default action
+    await Run();
+    await RunAnalytics();
+  });
+
+  const Data = [
+    {svg: <Accepted />, value: accepted, text: 'Requests Accepted'},
+    {
+      svg: <Measurement />,
+      value: completed,
+      text: 'Measurements Taken (89.5%)',
+    },
+    // {svg: <Achievements />, value: 103, text: 'Achievements Unlocked'},
+  ];
 
   const data = [
     {
@@ -61,15 +95,15 @@ const Homepage = ({route, navigation}) => {
         <View style={styles.group}>
           <View style={styles.TopView}>
             <View style={styles.status}>
-              <Text style={styles.TopTxt}>
+              {/* <Text style={styles.TopTxt}>
                 {switchValue ? (
                   <View style={styles.spot} />
                 ) : (
                   <View style={styles.greySpot} />
                 )}
                 {switchValue ? ' Online' : ' Offline'}
-              </Text>
-              <View style={styles.Switches}>
+              </Text> */}
+              {/* <View style={styles.Switches}>
                 <Switches
                   shape={'pill'}
                   buttonColor="#000"
@@ -84,17 +118,15 @@ const Homepage = ({route, navigation}) => {
                   value={switchValue}
                   animationDuration={100}
                 />
-              </View>
+              </View> */}
             </View>
             <View style={styles.Wallet}>
-              {switchValue ? <Wallet /> : <GreyWallet />}
+              <Wallet />
             </View>
             <Text style={styles.bal}>Sew Balance</Text>
-            <Text style={switchValue ? styles.amt : styles.amtgrey}>
-              20,890
-              <Text style={switchValue ? styles.amts : styles.amtsgrey}>
-                NGN
-              </Text>
+            <Text style={switchValue ? styles.amt : styles.amt}>
+              {purse.current_balance}
+              <Text style={switchValue ? styles.amts : styles.amts}>NGN</Text>
             </Text>
             <Text style={styles.dueDate}>Next withdrawal due 7th April 20</Text>
           </View>
@@ -179,6 +211,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
+    paddingVertical: 8,
   },
   Switches: {
     transform: [{rotate: '180deg'}],

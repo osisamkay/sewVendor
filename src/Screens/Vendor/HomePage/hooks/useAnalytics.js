@@ -11,6 +11,7 @@ export default () => {
   const [completed, setCompleted] = useState([]);
   const [reviews, setReviews] = useState([]);
   const [message, setMessage] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const {userData} = useSelector(state => state.LoginReducer);
   let {access_token} = userData;
@@ -21,57 +22,61 @@ export default () => {
     borderRadius: 6,
   };
 
-  useEffect(() => {
-    /**gets total achievements*/
-    const request = new Promise(res => {
-      res(
-        Instance.get(
-          'vendors/retailer/analytics/achievements?provider=vendor',
-          {
-            headers: {
-              Authorization: 'Bearer ' + access_token,
-            },
-          },
-        ),
-      );
-    });
-    request.then(({data: data}) => {
-      setAchievements(data.data);
-    });
-    /**gets sold materials */
-    const requestCompleted = new Promise(res => {
-      res(
-        Instance.get('vendors/retailer/analytics/sold_out?provider=vendor', {
+  const Analytics = async () => {
+    setLoading(true);
+    try {
+      const request = await Instance.get(
+        `vendors/retailer/analytics/achievements?provider=vendor`,
+        {
           headers: {
             Authorization: 'Bearer ' + access_token,
           },
-        }),
+        },
       );
-    });
-    requestCompleted.then(({data: data}) => {
-      setCompleted(data.data);
-    });
-    /**gets completed jobs reviews */
-    const requestReviews = new Promise(res => {
-      res(
-        Instance.get('vendors/tailor/jobs/reviews?provider=vendor', {
-          headers: {
-            Authorization: 'Bearer ' + access_token,
-          },
-        }),
-      );
-    });
-    requestReviews.then(({data: data}) => {
-      console.log(data);
-      let s = data.status;
-      let m = data.message;
+      let s = request.data.status;
+      let m = request.data.message;
       if (s) {
-        setReviews(data.data);
+        setAchievements(request.data.data);
+        setLoading(false);
       } else {
-        setMessage(m);
+        setLoading(false);
       }
-    });
-  }, [access_token]);
+      //**gets ongoing projects */
+      const requestCompleted = await Instance.get(
+        'vendors/retailer/analytics/sold_out?provider=vendor',
+        {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        },
+      );
+      let s2 = requestCompleted.data.status;
+      let m2 = requestCompleted.data.message;
+      if (s2) {
+        setCompleted(requestCompleted.data.data);
+      } else {
+        setLoading(false);
+      }
+      const requestReviews = await Instance.get(
+        'vendors/tailor/jobs/reviews?provider=vendor',
+        {
+          headers: {
+            Authorization: 'Bearer ' + access_token,
+          },
+        },
+      );
+      let s3 = requestReviews.data.status;
+      let m3 = requestReviews.data.message;
+      if (s3) {
+        setCompleted(requestReviews.data.data);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      // setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
+  };
 
-  return [Achievements, completed, reviews, message];
+  return [Analytics, Achievements, completed, reviews, message];
 };

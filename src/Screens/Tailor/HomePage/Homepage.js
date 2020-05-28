@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useCallback} from 'react';
+import React, {useState} from 'react';
 import {
   View,
   Text,
@@ -73,11 +73,11 @@ const TailorHomepage = ({route}) => {
   ];
 
   const navigation = useNavigation();
-  navigation.addListener('focus', e => {
+  navigation.addListener('focus', async e => {
     // Prevent default action
-    Run();
-    RunAnalytics();
-    RunVendorHome();
+    await Run();
+    await RunAnalytics();
+    await RunVendorHome();
   });
 
   const options = {};

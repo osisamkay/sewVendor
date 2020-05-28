@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useSelector} from 'react-redux';
 import {PermissionsAndroid} from 'react-native';
 import ImagePicker from 'react-native-image-picker';
@@ -28,7 +28,6 @@ export default () => {
   const handleToggle = () => {
     setLoading(true);
     const request = new Promise(res => {
-      console.log('you');
       res(
         Instance.put(
           'vendors/tailor/toggle-visibility?provider=vendor',
@@ -65,67 +64,40 @@ export default () => {
     //**gets on-going projects */
   };
 
-  const RunVendorHome = () => {
-    /**gets user profile */
-    const request = new Promise(res => {
-      res(
-        Instance.get('vendors/profile?provider=vendor', {
-          headers: {
-            Authorization: 'Bearer ' + access_token,
-          },
-        }),
-      );
-    });
-    request.then(({data: data}) => {
-      console.log(data);
-      setProfile(data.data);
-    });
-    //**gets all styles */
-    //**gets all materials */
-    const requestStyles = new Promise(res => {
-      res(
-        Instance.get('styles?provider=vendor', {
-          headers: {
-            Authorization: 'Bearer ' + access_token,
-          },
-        }),
-      );
-    });
-    requestStyles.then(({data: data}) => {
-      setStyles(data.data);
-    });
+  const RunVendorHome = async () => {
+    setLoading(true);
+    try {
+      const response = await Instance.get(`vendors/profile?provider=vendor`, {
+        headers: {
+          Authorization: 'Bearer ' + access_token,
+        },
+      });
+      let s = response.data.status;
+      let m = response.data.message;
+      if (s) {
+        setProfile(response.data.data);
+        setLoading(false);
+      } else {
+        setLoading(false);
+      }
+      //**gets ongoing projects */
+      const response2 = await Instance.get('styles?provider=vendor', {
+        headers: {
+          Authorization: 'Bearer ' + access_token,
+        },
+      });
+      let s2 = response2.data.status;
+      let m2 = response2.data.message;
+      if (s2) {
+        setStyles(response2.data.data);
+      } else {
+        setLoading(false);
+      }
+    } catch (err) {
+      // setErrorMessage('Something went wrong');
+      setLoading(false);
+    }
   };
-
-  useEffect(() => {
-    // /**gets user profile */
-    // const request = new Promise(res => {
-    //   res(
-    //     Instance.get('vendors/profile?provider=vendor', {
-    //       headers: {
-    //         Authorization: 'Bearer ' + access_token,
-    //       },
-    //     }),
-    //   );
-    // });
-    // request.then(({data: data}) => {
-    //   console.log(data);
-    //   setProfile(data.data);
-    // });
-    // //**gets all styles */
-    // //**gets all materials */
-    // const requestStyles = new Promise(res => {
-    //   res(
-    //     Instance.get('styles?provider=vendor', {
-    //       headers: {
-    //         Authorization: 'Bearer ' + access_token,
-    //       },
-    //     }),
-    //   );
-    // });
-    // requestStyles.then(({data: data}) => {
-    //   setStyles(data.data);
-    // });
-  }, [access_token]);
 
   return [loading, handleToggle, online, profile, styled, RunVendorHome];
 };
