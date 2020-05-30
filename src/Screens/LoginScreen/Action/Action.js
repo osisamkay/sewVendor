@@ -13,6 +13,7 @@ const {
   LOGOUT_USER,
   GET_TAILOR_CAT_ID,
   PLAYER_CALLED,
+  ONE_SIGNAL,
 } = actionType;
 
 export const loginUser = payload => ({
@@ -62,5 +63,9 @@ export const gettailorid = payload => ({
 });
 export const callplayer = payload => ({
   type: PLAYER_CALLED,
+  payload,
+});
+export const signalData = payload => ({
+  type: ONE_SIGNAL,
   payload,
 });

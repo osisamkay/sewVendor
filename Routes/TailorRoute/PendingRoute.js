@@ -10,6 +10,7 @@ import Pending from '../../src/Screens/Measurer/Pending/Pending';
 import Measurement from '../../src/Screens/Measurer/Measurment/Measurement';
 import PendingMeasurement from '../../src/Screens/Measurer/Measurment/Measurement';
 import TailorPending from '../../src/Screens/Tailor/Pending/Pending';
+import JobPage from '../../src/Screens/Tailor/Pending/JobPage';
 
 const Stack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -24,7 +25,8 @@ function TailorPendingRoute({navigation}) {
           headerRight: () => (
             <Ionicons
               onPress={() => {
-                navigation.openDrawer();
+                // navigation.openDrawer();
+                navigation.navigate('Request Notification');
               }}
               name="bookmark"
               size={25}
@@ -45,6 +47,23 @@ function TailorPendingRoute({navigation}) {
           ),
         }}
         component={TailorPending}
+      />
+      <Stack.Screen
+        name="Request Notification"
+        options={{
+          headerLeft: () => (
+            <Ionicons
+              onPress={() => {
+                navigation.openDrawer();
+              }}
+              name="bars"
+              size={30}
+              color="black"
+              style={{paddingLeft: 23}}
+            />
+          ),
+        }}
+        component={JobPage}
       />
       <Stack.Screen
         component={PendingMeasurement}

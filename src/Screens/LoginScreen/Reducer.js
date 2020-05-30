@@ -14,6 +14,7 @@ const {
   LOGOUT_USER,
   GET_TAILOR_CAT_ID,
   PLAYER_CALLED,
+  ONE_SIGNAL,
 } = actionType;
 
 const initialState = {
@@ -25,6 +26,8 @@ const initialState = {
   loading: false,
   tailor_category_id: 0,
   playerCalled: false,
+  signal: false,
+  Notification: null,
 };
 
 export const LoginReducer = (state = initialState, {type, payload}) => {
@@ -72,6 +75,9 @@ export const LoginReducer = (state = initialState, {type, payload}) => {
 
     case PLAYER_CALLED:
       return {...state, playerCalled: true};
+
+    case ONE_SIGNAL:
+      return {...state, signal: true, Notification: payload};
 
     case LOGOUT_USER:
       return {

@@ -17,10 +17,13 @@ import {PersistGate} from 'redux-persist/integration/react';
 import AsyncStorage from '@react-native-community/async-storage';
 import autoMergeLevel2 from 'redux-persist/lib/stateReconciler/autoMergeLevel2';
 import {useEffect} from 'react';
+import useOnesignal from './useOnesignal';
 
 const Stack = createStackNavigator();
 
 function App() {
+  const [notificationPush] = useOnesignal();
+
   OneSignal.setLogLevel(6, 0);
 
   // Replace 'YOUR_ONESIGNAL_APP_ID' with your OneSignal App ID.
@@ -34,11 +37,15 @@ function App() {
   // The promptForPushNotifications function code will show the iOS push notification prompt. We recommend removing the following code and instead using an In-App Message to prompt for notification permission (See step below)
   OneSignal.promptForPushNotificationsWithUserResponse(myiOSPromptCallback);
 
-  useEffect(() => {
-    OneSignal.removeEventListener('received', onReceived);
-    OneSignal.removeEventListener('opened', onOpened);
-    OneSignal.removeEventListener('ids', onIds);
-  }, []);
+  OneSignal.addEventListener('received', onReceived);
+  OneSignal.addEventListener('opened', onOpened);
+  OneSignal.addEventListener('ids', onIds);
+
+  // useEffect(() => {
+  //   OneSignal.addEventListener('received', onReceived);
+  //   OneSignal.addEventListener('opened', onOpened);
+  //   OneSignal.addEventListener('ids', onIds);
+  // }, []);
 
   function onReceived(notification) {
     console.log('Notification received: ', notification);
@@ -49,6 +56,8 @@ function App() {
     console.log('Data: ', openResult.notification.payload.additionalData);
     console.log('isActive: ', openResult.notification.isAppInFocus);
     console.log('openResult: ', openResult);
+    // this.props.navigation.navigate('Request Notification');
+    notificationPush(openResult);
   }
 
   function onIds(device) {

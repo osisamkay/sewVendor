@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   View,
   Text,
@@ -12,6 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import {Button, Divider} from 'react-native-elements';
+import {useSelector} from 'react-redux';
 import {
   widthPercentageToDP,
   heightPercentageToDP,
@@ -61,6 +62,9 @@ const TailorHomepage = ({route}) => {
     pendingR,
     history,
   ] = usePurse();
+  const {userData, isLogged, playerCalled, signal} = useSelector(
+    state => state.LoginReducer,
+  );
 
   const Data = [
     {svg: <Accepted />, value: accepted, text: 'Requests Accepted'},
@@ -71,6 +75,15 @@ const TailorHomepage = ({route}) => {
     },
     {svg: <Achievements />, value: 103, text: 'Achievements Unlocked'},
   ];
+
+  useEffect(() => {
+    if (signal) {
+      navigation.navigate('Requests', {
+        screen: 'Request Notification',
+        params: {user: 'jane'},
+      });
+    }
+  }, [navigation, signal]);
 
   const navigation = useNavigation();
   navigation.addListener('focus', async e => {

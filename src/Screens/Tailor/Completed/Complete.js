@@ -249,4 +249,7 @@ const styles = StyleSheet.create({
     fontSize: heightPercentageToDP('2.8%'),
     marginLeft: 10,
   },
+  spinnerTextStyle: {
+    color: '#fff',
+  },
 });
